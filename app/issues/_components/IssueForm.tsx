@@ -1,6 +1,5 @@
 "use client";
 import { Button, Callout, RadioGroup, TextField } from "@radix-ui/themes";
-import dynamic from "next/dynamic";
 import { useForm, Controller } from "react-hook-form";
 import "easymde/dist/easymde.min.css";
 import axios from "axios";
@@ -11,10 +10,7 @@ import { createIssueSchema, updateIssueSchema } from "@/app/validationSchema";
 import z from "zod";
 import { ErrorMessage, Spinner } from "@/components";
 import { Issue } from "@prisma/client";
-const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
-  ssr: false,
-});
-
+import SimpleMDE from "react-simplemde-editor";
 type IssueFormData = z.infer<typeof createIssueSchema>;
 type updateIssueData = z.infer<typeof updateIssueSchema>;
 type IssueFormProps = {
@@ -46,6 +42,7 @@ const IssueForm = ({ issue }: IssueFormProps) => {
       setSubmitting(true);
       if (issue) await axios.patch(`/api/issue/${issue.id}`, data);
       else await axios.post("/api/issue", data);
+
       router.push("/issues");
     } catch (error) {
       setSubmitting(false);
@@ -101,8 +98,7 @@ const IssueForm = ({ issue }: IssueFormProps) => {
           render={({ field }) => (
             <SimpleMDE
               placeholder="Description"
-              value={field.value || ""}
-              onChange={(value) => field.onChange(value)}
+              {...field}
             />
           )}
         />

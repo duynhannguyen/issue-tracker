@@ -30,5 +30,5 @@ const IssueDetailPage = async ({ params }: Props) => {
     </Grid>
   );
 };
-
+export const revalidate = 0;
 export default IssueDetailPage;
