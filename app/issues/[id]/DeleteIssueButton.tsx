@@ -9,6 +9,7 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
   const [error, setError] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
+
   const deleteIssue = async () => {
     try {
       setIsDeleting(true);
