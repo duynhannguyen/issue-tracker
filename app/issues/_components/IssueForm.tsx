@@ -1,16 +1,16 @@
 "use client";
+import { createIssueSchema, updateIssueSchema } from "@/app/validationSchema";
+import { ErrorMessage, Spinner } from "@/components";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Issue } from "@prisma/client";
 import { Button, Callout, RadioGroup, TextField } from "@radix-ui/themes";
-import { useForm, Controller } from "react-hook-form";
-import "easymde/dist/easymde.min.css";
 import axios from "axios";
+import "easymde/dist/easymde.min.css";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { createIssueSchema, updateIssueSchema } from "@/app/validationSchema";
-import z from "zod";
-import { ErrorMessage, Spinner } from "@/components";
-import { Issue } from "@prisma/client";
+import { Controller, useForm } from "react-hook-form";
 import SimpleMDE from "react-simplemde-editor";
+import z from "zod";
 type IssueFormData = z.infer<typeof createIssueSchema>;
 type updateIssueData = z.infer<typeof updateIssueSchema>;
 type IssueFormProps = {
