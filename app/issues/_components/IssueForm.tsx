@@ -37,7 +37,6 @@ const IssueForm = ({ issue }: IssueFormProps) => {
   const [isSubmitting, setSubmitting] = useState(false);
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log("data", data);
     try {
       setSubmitting(true);
       if (issue) await axios.patch(`/api/issue/${issue.id}`, data);
