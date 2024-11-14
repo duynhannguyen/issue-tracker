@@ -4,8 +4,20 @@ import { Table } from "@radix-ui/themes";
 import React from "react";
 import IssueActions from "./IssueActions";
 import CustomLink from "@/components/CustomLink";
-const IssuesPage = async () => {
-  const getIssues = await prisma.issue.findMany();
+import { Status } from "@prisma/client";
+const IssuesPage = async ({
+  searchParams,
+}: {
+  searchParams: { status: Status };
+}) => {
+  const statuses = Object.values(Status);
+  const status = statuses.includes(searchParams.status)
+    ? searchParams.status
+    : undefined;
+
+  const getIssues = await prisma.issue.findMany({
+    where: { status },
+  });
   return (
     <div>
       <IssueActions />
