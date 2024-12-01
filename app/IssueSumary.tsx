@@ -33,7 +33,7 @@ const IssueSumary = ({ open, inProgress, closed }: Props) => {
   ];
 
   return (
-    <Flex>
+    <Flex gap={"4"}>
       {containers.map((container) => (
         <Card key={container.label}>
           <Flex
