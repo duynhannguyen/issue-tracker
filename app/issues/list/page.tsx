@@ -4,6 +4,14 @@ import { Status } from "@prisma/client";
 import IssueActions from "./IssueActions";
 import IssueTable, { columnNames, IssueQuery } from "./IssueTable";
 import { Flex } from "@radix-ui/themes";
+import { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  title: "Issue Tracker - Issue List",
+  description: "View all issues",
+};
+
 const IssuesPage = async ({ searchParams }: { searchParams: IssueQuery }) => {
   const statuses = Object.values(Status);
   const status = statuses.includes(searchParams.status)
@@ -20,14 +28,14 @@ const IssuesPage = async ({ searchParams }: { searchParams: IssueQuery }) => {
   const pageSize = 10;
 
   const getIssues = await prisma.issue.findMany({
-    where: { status },
+    where,
     orderBy,
     skip: (page - 1) * pageSize,
     take: pageSize,
   });
 
   const issueCount = await prisma.issue.count({
-    where: { status },
+    where,
   });
 
   return (
