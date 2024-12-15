@@ -1,10 +1,11 @@
-import Pagination from "@/components/Pagination";
 import LatestIssues from "./LatestIssues";
 import IssueSumary from "./IssueSumary";
 import prisma from "@/prisma/client";
 import IssuesChart from "./IssuesChart";
 import { Flex, Grid } from "@radix-ui/themes";
 import { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Issue Tracker - Dashboard",

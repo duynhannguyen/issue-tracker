@@ -20,8 +20,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  console.log("page layout");
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      suppressHydrationWarning
+    >
       <body className={inter.variable}>
         <QueryClientProvider>
           <AuthProvider>

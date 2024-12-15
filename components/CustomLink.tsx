@@ -9,7 +9,11 @@ type CustomLinkProps = {
 
 const CustomLink = ({ href, children }: CustomLinkProps) => {
   return (
-    <NextLink href={href} legacyBehavior passHref>
+    <NextLink
+      href={href}
+      legacyBehavior
+      passHref
+    >
       <RadixLink>{children}</RadixLink>
     </NextLink>
   );
