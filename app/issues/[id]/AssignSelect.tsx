@@ -1,5 +1,5 @@
 "use client";
-import { Skeleton } from "@/components";
+import { Skeleton } from "@/app/components";
 import { Issue, User } from "@prisma/client";
 import { Select } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
@@ -16,7 +16,8 @@ const AssignSelect = ({ issue }: { issue: Issue }) => {
     staleTime: 60 * 1000,
     retry: 3,
   });
-
+  if (isLoading) return <Skeleton />;
+  if (error) return null;
   const assignIssue = async (userId: string) => {
     try {
       await axios.patch(`/api/issue/${issue.id}`, {
@@ -27,9 +28,6 @@ const AssignSelect = ({ issue }: { issue: Issue }) => {
       toast.error("Changes could not be saved");
     }
   };
-
-  if (error) return null;
-  if (isLoading) return <Skeleton />;
 
   return (
     <>

@@ -1,16 +1,23 @@
 "use client";
 import { createIssueSchema, updateIssueSchema } from "@/app/validationSchema";
-import { ErrorMessage, Spinner } from "@/components";
+import { ErrorMessage, Spinner } from "@/app/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Issue } from "@prisma/client";
-import { Button, Callout, RadioGroup, TextField } from "@radix-ui/themes";
+import {
+  Button,
+  Callout,
+  RadioGroup,
+  TextField,
+  Text,
+  Flex,
+} from "@radix-ui/themes";
 import axios from "axios";
 import "easymde/dist/easymde.min.css";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import SimpleMDE from "react-simplemde-editor";
-import z from "zod";
+import { z } from "zod";
 type IssueFormData = z.infer<typeof createIssueSchema>;
 type updateIssueData = z.infer<typeof updateIssueSchema>;
 type IssueFormProps = {
@@ -63,10 +70,14 @@ const IssueForm = ({ issue }: IssueFormProps) => {
         onSubmit={onSubmit}
         className=" space-y-3 "
       >
-        <TextField.Root
-          placeholder="Title"
-          {...register("title")}
-        ></TextField.Root>
+        <TextField.Root>
+          {" "}
+          <TextField.Input
+            defaultValue={issue?.title}
+            placeholder="Title"
+            {...register("title")}
+          />
+        </TextField.Root>
 
         {issue && (
           <Controller
@@ -80,11 +91,42 @@ const IssueForm = ({ issue }: IssueFormProps) => {
                 onBlur={onBlur}
                 defaultValue={issue.status}
               >
-                <RadioGroup.Item value="OPEN">OPEN</RadioGroup.Item>
-                <RadioGroup.Item value="IN_PROGRESS">
-                  IN_PROGRESS
-                </RadioGroup.Item>
-                <RadioGroup.Item value="CLOSED">CLOSED</RadioGroup.Item>
+                <Text
+                  as="div"
+                  size={"4"}
+                >
+                  <Flex
+                    align={"center"}
+                    gap={"2"}
+                  >
+                    <RadioGroup.Item value="OPEN" />
+                    Open
+                  </Flex>
+                </Text>
+                <Text
+                  as="div"
+                  size={"4"}
+                >
+                  <Flex
+                    align={"center"}
+                    gap={"2"}
+                  >
+                    <RadioGroup.Item value="IN_PROGRESS" />
+                    In Progress
+                  </Flex>
+                </Text>
+                <Text
+                  as="div"
+                  size={"4"}
+                >
+                  <Flex
+                    align={"center"}
+                    gap={"2"}
+                  >
+                    <RadioGroup.Item value="CLOSED" />
+                    Closed
+                  </Flex>
+                </Text>
               </RadioGroup.Root>
             )}
           />

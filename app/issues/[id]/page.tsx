@@ -22,7 +22,7 @@ const fetchIssue = cache((issueId: number) =>
 );
 
 const IssueDetailPage = async ({ params }: Props) => {
-  if (typeof parseInt(params.id) !== "number") notFound();
+  // if (typeof parseInt(params.id) !== "number") notFound();
 
   const session = await getServerSession(authOptions);
 
@@ -63,5 +63,5 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-export const revalidate = 0;
+// export const revalidate = 0;
 export default IssueDetailPage;

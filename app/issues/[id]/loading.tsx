@@ -1,5 +1,5 @@
 import { Box, Card } from "@radix-ui/themes";
-import { Skeleton } from "@/components";
+import { Skeleton } from "@/app/components";
 const IssueDetailLoading = () => {
   return (
     <Box className="max-w-xl">
@@ -8,7 +8,10 @@ const IssueDetailLoading = () => {
         <Skeleton width={"5rem"} />
         <Skeleton width={"8rem"} />
       </div>
-      <Card className="prose " mt={"4"}>
+      <Card
+        className="prose "
+        mt={"4"}
+      >
         <Skeleton count={3} />
       </Card>
     </Box>

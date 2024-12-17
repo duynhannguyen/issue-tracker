@@ -6,8 +6,8 @@ const IssueForm = dynamic(() => import("@/app/issues/_components/IssueForm"), {
   loading: () => <IssueFormSkeleton />,
 });
 
-const page = () => {
+const NewIssuePage = () => {
   return <IssueForm />;
 };
 
-export default page;
+export default NewIssuePage;

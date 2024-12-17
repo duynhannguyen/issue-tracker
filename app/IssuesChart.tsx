@@ -23,10 +23,10 @@ const IssuesChart = ({ open, inProgress, closed }: Props) => {
         height={300}
       >
         <BarChart data={data}>
-          <XAxis dataKey={"label"} />
+          <XAxis dataKey="label" />
           <YAxis />
           <Bar
-            dataKey={"value"}
+            dataKey="value"
             barSize={60}
             style={{
               fill: "var(--accent-a10)",

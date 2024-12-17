@@ -13,7 +13,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaBug } from "react-icons/fa6";
-import { Skeleton } from "@/components";
+import { Skeleton } from "@/app/components";
 const NavBar = () => {
   return (
     <nav className=" space-x-6 border-b mb-5 px-5 py-3 ">
@@ -35,8 +35,6 @@ const NavBar = () => {
     </nav>
   );
 };
-
-export default NavBar;
 
 const NavLinks = () => {
   const currentPath = usePathname();
@@ -65,8 +63,7 @@ const NavLinks = () => {
 
 const AuthStatus = () => {
   const { status, data: session } = useSession();
-  const a = useSession();
-  console.log("a", a);
+
   if (status === "loading") return <Skeleton width={"3rem"} />;
   if (status === "unauthenticated")
     return (
@@ -101,3 +98,4 @@ const AuthStatus = () => {
     </Box>
   );
 };
+export default NavBar;

@@ -1,4 +1,4 @@
-import { IssueStatusBadge } from "@/components";
+import { IssueStatusBadge } from "@/app/components";
 import { Issue } from "@prisma/client";
 import { Heading, Card, Text } from "@radix-ui/themes";
 import React from "react";

@@ -1,4 +1,4 @@
-import { CustomLink, IssueStatusBadge } from "@/components";
+import { CustomLink, IssueStatusBadge } from "@/app/components";
 import { Issue, Status } from "@prisma/client";
 import { ArrowUpIcon, ArrowDownIcon } from "@radix-ui/react-icons";
 import { Table } from "@radix-ui/themes";
@@ -83,8 +83,6 @@ const IssueTable = ({ issues, searchParams }: Props) => {
   );
 };
 
-export default IssueTable;
-
 const columns: {
   title: string;
   value: keyof Issue;
@@ -99,4 +97,5 @@ const columns: {
   },
 ];
 
+export default IssueTable;
 export const columnNames = columns.map((column) => column.value);
