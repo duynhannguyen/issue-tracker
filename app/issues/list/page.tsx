@@ -6,6 +6,8 @@ import IssueTable, { columnNames, IssueQuery } from "./IssueTable";
 import { Flex } from "@radix-ui/themes";
 import { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 const IssuesPage = async ({ searchParams }: { searchParams: IssueQuery }) => {
   const statuses = Object.values(Status);
   const status = statuses.includes(searchParams.status)
@@ -27,7 +29,6 @@ const IssuesPage = async ({ searchParams }: { searchParams: IssueQuery }) => {
     skip: (page - 1) * pageSize,
     take: pageSize,
   });
-
   const issueCount = await prisma.issue.count({
     where,
   });
@@ -50,7 +51,7 @@ const IssuesPage = async ({ searchParams }: { searchParams: IssueQuery }) => {
     </Flex>
   );
 };
-export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Issue Tracker - Issue List",
   description: "View all issues",

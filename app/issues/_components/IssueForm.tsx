@@ -1,15 +1,16 @@
 "use client";
 import { createIssueSchema, updateIssueSchema } from "@/app/validationSchema";
-import { ErrorMessage, Spinner } from "@/app/components";
+import { ErrorMessage, IssueStatusBadge, Spinner } from "@/app/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Issue } from "@prisma/client";
 import {
   Button,
   Callout,
-  RadioGroup,
   TextField,
   Text,
   Flex,
+  Select,
+  Card,
 } from "@radix-ui/themes";
 import axios from "axios";
 import "easymde/dist/easymde.min.css";
@@ -37,6 +38,7 @@ const IssueForm = ({ issue }: IssueFormProps) => {
       title: issue?.title,
       description: issue?.description,
       status: issue?.status,
+      priority: issue?.priority,
     },
   });
   const router = useRouter();
@@ -78,59 +80,86 @@ const IssueForm = ({ issue }: IssueFormProps) => {
             {...register("title")}
           />
         </TextField.Root>
-
-        {issue && (
-          <Controller
-            name="status"
-            control={control}
-            render={({ field: { onChange, name, ref, onBlur } }) => (
-              <RadioGroup.Root
-                name={name}
-                onChange={onChange}
-                ref={ref}
-                onBlur={onBlur}
-                defaultValue={issue.status}
+        <Flex className="sm:flex-row sm:items-center sm:space-y-0 sm:space-x-3  flex-col items-start space-y-3   ">
+          <Card
+            variant="surface"
+            className="w-fit"
+          >
+            <Flex
+              align={"center"}
+              gap={"2"}
+            >
+              <Text>Priority:</Text>
+              <Controller
+                name="priority"
+                control={control}
+                render={({ field: { onChange, name, ref, onBlur } }) => (
+                  <Select.Root
+                    name={name}
+                    onValueChange={onChange}
+                    size="2"
+                    defaultValue={issue?.priority}
+                    disabled={issue?.status === "CLOSED"}
+                  >
+                    <Select.Trigger />
+                    <Select.Content>
+                      <Select.Item value="HIGH">
+                        <IssueStatusBadge priority="HIGH" />
+                      </Select.Item>
+                      <Select.Item value="MEDIUM">
+                        {" "}
+                        <IssueStatusBadge priority="MEDIUM" />
+                      </Select.Item>
+                      <Select.Item value="LOW">
+                        <IssueStatusBadge priority="LOW" />
+                      </Select.Item>
+                    </Select.Content>
+                  </Select.Root>
+                )}
+              />
+            </Flex>
+          </Card>
+          {issue && (
+            <Card
+              variant="surface"
+              className="w-fit"
+            >
+              <Flex
+                align={"center"}
+                gap={"2"}
               >
-                <Text
-                  as="div"
-                  size={"4"}
-                >
-                  <Flex
-                    align={"center"}
-                    gap={"2"}
-                  >
-                    <RadioGroup.Item value="OPEN" />
-                    Open
-                  </Flex>
-                </Text>
-                <Text
-                  as="div"
-                  size={"4"}
-                >
-                  <Flex
-                    align={"center"}
-                    gap={"2"}
-                  >
-                    <RadioGroup.Item value="IN_PROGRESS" />
-                    In Progress
-                  </Flex>
-                </Text>
-                <Text
-                  as="div"
-                  size={"4"}
-                >
-                  <Flex
-                    align={"center"}
-                    gap={"2"}
-                  >
-                    <RadioGroup.Item value="CLOSED" />
-                    Closed
-                  </Flex>
-                </Text>
-              </RadioGroup.Root>
-            )}
-          />
-        )}
+                <Text size={"3"}>Status:</Text>
+                <Controller
+                  name="status"
+                  control={control}
+                  render={({ field: { onChange, name, ref, onBlur } }) => (
+                    <Select.Root
+                      name={name}
+                      onValueChange={onChange}
+                      size="2"
+                      defaultValue={issue.status}
+                    >
+                      <Select.Trigger />
+                      <Select.Content>
+                        <Select.Item value="OPEN">
+                          <IssueStatusBadge status="OPEN" />
+                        </Select.Item>
+                        <Select.Item value="IN_PROGRESS">
+                          {" "}
+                          <IssueStatusBadge status="IN_PROGRESS" />
+                        </Select.Item>
+                        <Select.Item value="CLOSED">
+                          {" "}
+                          <IssueStatusBadge status="CLOSED" />
+                        </Select.Item>
+                      </Select.Content>
+                    </Select.Root>
+                  )}
+                />
+              </Flex>
+            </Card>
+          )}
+        </Flex>
 
         <ErrorMessage>{errors.title?.message}</ErrorMessage>
         <Controller
@@ -144,7 +173,10 @@ const IssueForm = ({ issue }: IssueFormProps) => {
           )}
         />
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
-        <Button disabled={isSubmitting}>
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+        >
           {" "}
           {issue ? "Update Issue" : "Submit New Issue"}{" "}
           {isSubmitting && <Spinner />}

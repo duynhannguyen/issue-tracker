@@ -7,11 +7,11 @@ import EditIssueFormSkeleton from "./loading";
 type EditIssuePageProps = {
   params: { id: string };
 };
+
 const IssueForm = dynamic(() => import("@/app/issues/_components/IssueForm"), {
   ssr: false,
   loading: () => <EditIssueFormSkeleton />,
 });
-
 const EditIssuePage = async ({ params }: EditIssuePageProps) => {
   const issue = await prisma.issue.findUnique({
     where: { id: parseInt(params.id) },
