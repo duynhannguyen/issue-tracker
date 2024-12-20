@@ -69,6 +69,12 @@ const IssueTable = ({ issues, searchParams }: Props) => {
               <div className="md:hidden block">
                 <IssueStatusBadge status={issue.status} />
               </div>
+              <div className="md:hidden block">
+                <IssueStatusBadge priority={issue.priority} />
+              </div>
+            </Table.Cell>
+            <Table.Cell className="hidden md:table-cell">
+              <IssueStatusBadge priority={issue.priority} />
             </Table.Cell>
             <Table.Cell className="hidden md:table-cell">
               <IssueStatusBadge status={issue.status} />
@@ -89,6 +95,11 @@ const columns: {
   className?: string;
 }[] = [
   { title: "Issues", value: "title" },
+  {
+    title: "Priority",
+    value: "priority",
+    className: "hidden md:table-cell",
+  },
   { title: "Status", value: "status", className: "hidden md:table-cell" },
   {
     title: "Created",
