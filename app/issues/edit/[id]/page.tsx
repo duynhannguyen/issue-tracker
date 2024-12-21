@@ -3,6 +3,8 @@ import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
 import dynamic from "next/dynamic";
 import EditIssueFormSkeleton from "./loading";
+import { getServerSession } from "next-auth";
+import authOptions from "@/app/auth/authOptions";
 
 type EditIssuePageProps = {
   params: { id: string };
@@ -18,8 +20,16 @@ const EditIssuePage = async ({ params }: EditIssuePageProps) => {
   });
 
   if (!issue) notFound();
+  const assignee = await prisma.user.findMany({
+    where: { id: issue?.assignedToUserId ?? undefined },
+  });
 
-  return <IssueForm issue={issue} />;
+  return (
+    <IssueForm
+      issue={issue}
+      assignee={assignee ?? undefined}
+    />
+  );
 };
 
 export default EditIssuePage;

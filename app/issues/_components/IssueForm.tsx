@@ -2,7 +2,7 @@
 import { createIssueSchema, updateIssueSchema } from "@/app/validationSchema";
 import { ErrorMessage, IssueStatusBadge, Spinner } from "@/app/components";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Issue } from "@prisma/client";
+import { Issue, User } from "@prisma/client";
 import {
   Button,
   Callout,
@@ -19,13 +19,15 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import SimpleMDE from "react-simplemde-editor";
 import { z } from "zod";
+import { Session } from "next-auth";
 type IssueFormData = z.infer<typeof createIssueSchema>;
 type updateIssueData = z.infer<typeof updateIssueSchema>;
 type IssueFormProps = {
   issue?: Issue;
+  assignee?: User[];
 };
 
-const IssueForm = ({ issue }: IssueFormProps) => {
+const IssueForm = ({ issue, assignee }: IssueFormProps) => {
   const schema = issue ? updateIssueSchema : createIssueSchema;
   const {
     register,
@@ -57,6 +59,12 @@ const IssueForm = ({ issue }: IssueFormProps) => {
       setError("An unexpected error occurred. ");
     }
   });
+
+  const isAssignee = assignee?.filter(
+    (user) => user.id === issue?.assignedToUserId
+  );
+  console.log(isAssignee);
+
   return (
     <div className="max-w-lg ">
       {error && (
@@ -98,7 +106,7 @@ const IssueForm = ({ issue }: IssueFormProps) => {
                     name={name}
                     onValueChange={onChange}
                     size="2"
-                    defaultValue={issue?.priority}
+                    defaultValue={issue?.priority || "MEDIUM"}
                     disabled={issue?.status === "CLOSED"}
                   >
                     <Select.Trigger />
@@ -138,6 +146,7 @@ const IssueForm = ({ issue }: IssueFormProps) => {
                       onValueChange={onChange}
                       size="2"
                       defaultValue={issue.status}
+                      disabled={Boolean(isAssignee)}
                     >
                       <Select.Trigger />
                       <Select.Content>
