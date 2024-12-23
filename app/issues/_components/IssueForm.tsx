@@ -108,7 +108,11 @@ const IssueForm = ({ issue, assignee }: IssueFormProps) => {
                     onValueChange={onChange}
                     size="2"
                     defaultValue={issue?.priority || "MEDIUM"}
-                    disabled={issue?.status === "CLOSED"}
+                    disabled={
+                      issue?.status === "CLOSED" ||
+                      !isAssignee ||
+                      issue?.authorId !== session?.user.id
+                    }
                   >
                     <Select.Trigger />
                     <Select.Content>
@@ -148,8 +152,7 @@ const IssueForm = ({ issue, assignee }: IssueFormProps) => {
                       size="2"
                       defaultValue={issue.status}
                       disabled={
-                        !Boolean(isAssignee) ||
-                        issue.authorId !== session?.user.id
+                        !isAssignee || issue.authorId !== session?.user.id
                       }
                     >
                       <Select.Trigger />

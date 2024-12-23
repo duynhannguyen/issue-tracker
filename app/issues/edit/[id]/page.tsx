@@ -3,8 +3,6 @@ import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
 import dynamic from "next/dynamic";
 import EditIssueFormSkeleton from "./loading";
-import { getServerSession } from "next-auth";
-import authOptions from "@/app/auth/authOptions";
 
 type EditIssuePageProps = {
   params: { id: string };
