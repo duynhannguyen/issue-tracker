@@ -19,7 +19,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import SimpleMDE from "react-simplemde-editor";
 import { z } from "zod";
-import { Session } from "next-auth";
+import { useSession } from "next-auth/react";
 type IssueFormData = z.infer<typeof createIssueSchema>;
 type updateIssueData = z.infer<typeof updateIssueSchema>;
 type IssueFormProps = {
@@ -29,6 +29,7 @@ type IssueFormProps = {
 
 const IssueForm = ({ issue, assignee }: IssueFormProps) => {
   const schema = issue ? updateIssueSchema : createIssueSchema;
+  const { data: session } = useSession();
   const {
     register,
     control,
@@ -40,7 +41,7 @@ const IssueForm = ({ issue, assignee }: IssueFormProps) => {
       title: issue?.title,
       description: issue?.description,
       status: issue?.status,
-      priority: issue?.priority,
+      priority: issue?.priority || "MEDIUM",
     },
   });
   const router = useRouter();
@@ -63,7 +64,7 @@ const IssueForm = ({ issue, assignee }: IssueFormProps) => {
   const isAssignee = assignee?.filter(
     (user) => user.id === issue?.assignedToUserId
   );
-  console.log(isAssignee);
+  console.log("isAssignee", isAssignee);
 
   return (
     <div className="max-w-lg ">
@@ -146,7 +147,10 @@ const IssueForm = ({ issue, assignee }: IssueFormProps) => {
                       onValueChange={onChange}
                       size="2"
                       defaultValue={issue.status}
-                      disabled={Boolean(isAssignee)}
+                      disabled={
+                        !Boolean(isAssignee) ||
+                        issue.authorId !== session?.user.id
+                      }
                     >
                       <Select.Trigger />
                       <Select.Content>

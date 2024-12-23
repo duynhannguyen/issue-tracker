@@ -21,6 +21,7 @@ export default async function Home() {
       status: "CLOSED",
     },
   });
+
   return (
     <Grid
       columns={{ initial: "1", md: "2" }}

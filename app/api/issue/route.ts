@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
     data: {
       title: body.title,
       description: body.description,
+      authorId: session.user.id,
     },
   });
 
