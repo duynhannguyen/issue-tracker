@@ -69,7 +69,7 @@ const IssueTable = ({ issues, searchParams }: Props) => {
               <div className="md:hidden block">
                 <IssueStatusBadge status={issue.status} />
               </div>
-              <div className="md:hidden block">
+              <div className="md:hidden block ">
                 <IssueStatusBadge priority={issue.priority} />
               </div>
             </Table.Cell>

@@ -1,7 +1,7 @@
 import { Priority, Status } from "@prisma/client";
-import { Badge } from "@radix-ui/themes";
-import React from "react";
-
+import { Badge, Flex } from "@radix-ui/themes";
+import React, { ReactNode } from "react";
+import { SignalHigh, SignalLow, SignalMedium } from "lucide-react";
 type StatusMap = Record<
   Status,
   { label: string; color: "red" | "violet" | "green" }
@@ -11,6 +11,7 @@ type PriorityMap = Record<
   {
     label: string;
     color: "red" | "violet" | "green";
+    icon: JSX.Element;
   }
 >;
 
@@ -20,9 +21,13 @@ const statusMap: StatusMap = {
   CLOSED: { label: "CLOSED", color: "green" },
 };
 const priorityMap: PriorityMap = {
-  HIGH: { label: "HIGH", color: "red" },
-  MEDIUM: { label: "MEDIUM", color: "violet" },
-  LOW: { label: "LOW", color: "green" },
+  HIGH: { label: "HIGH", color: "red", icon: <SignalHigh size={24} /> },
+  MEDIUM: {
+    label: "MEDIUM",
+    color: "violet",
+    icon: <SignalMedium size={24} />,
+  },
+  LOW: { label: "LOW", color: "green", icon: <SignalLow size={24} /> },
 };
 
 const IssueStatusBadge = ({
@@ -42,7 +47,12 @@ const IssueStatusBadge = ({
       }
     >
       {(status && statusMap[status].label) ||
-        (priority && priorityMap[priority].label)}
+        (priority && (
+          <Flex align={"center"}>
+            <div>{priorityMap[priority].icon}</div>
+            <span className="h-2">{priorityMap[priority].label}</span>
+          </Flex>
+        ))}
     </Badge>
   );
 };
