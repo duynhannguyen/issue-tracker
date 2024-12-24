@@ -1,7 +1,7 @@
 import { CustomLink, IssueStatusBadge } from "@/app/components";
 import { Issue, Status } from "@prisma/client";
 import { ArrowUpIcon, ArrowDownIcon } from "@radix-ui/react-icons";
-import { Table } from "@radix-ui/themes";
+import { Table, Text } from "@radix-ui/themes";
 import Link from "next/link";
 import React from "react";
 
@@ -12,9 +12,19 @@ export type IssueQuery = {
   page: string;
 };
 
+type IssueList = Issue & {
+  author: {
+    id: string;
+    name: string | null;
+    email: string | null;
+    emailVerified: Date | null;
+    image: string | null;
+  };
+};
+
 type Props = {
   searchParams: IssueQuery;
-  issues: Issue[];
+  issues: IssueList[];
 };
 
 const IssueTable = ({ issues, searchParams }: Props) => {
@@ -64,8 +74,17 @@ const IssueTable = ({ issues, searchParams }: Props) => {
       <Table.Body>
         {issues.map((issue) => (
           <Table.Row key={issue.id}>
-            <Table.Cell>
+            <Table.Cell className="space-y-2">
               <CustomLink href={`${issue.id}`}>{issue.title}</CustomLink>
+              <div>
+                <Text
+                  color="gray"
+                  size={"1"}
+                >
+                  {" "}
+                  Created by {issue.author.name}{" "}
+                </Text>
+              </div>
               <div className="md:hidden block">
                 <IssueStatusBadge status={issue.status} />
               </div>

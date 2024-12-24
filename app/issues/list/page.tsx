@@ -25,6 +25,7 @@ const IssuesPage = async ({ searchParams }: { searchParams: IssueQuery }) => {
 
   const getIssues = await prisma.issue.findMany({
     where,
+    include: { author: true },
     orderBy,
     skip: (page - 1) * pageSize,
     take: pageSize,

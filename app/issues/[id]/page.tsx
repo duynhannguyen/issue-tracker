@@ -21,13 +21,23 @@ const fetchIssue = cache((issueId: number) =>
   })
 );
 
+const fetchIssueCreator = cache((creatorId: string) =>
+  prisma.user.findUnique({
+    where: {
+      id: creatorId,
+    },
+  })
+);
+
 const IssueDetailPage = async ({ params }: Props) => {
   if (typeof parseInt(params.id) !== "number") notFound();
 
   const session = await getServerSession(authOptions);
 
   const getIssueDetails = await fetchIssue(parseInt(params.id));
-
+  const getIssueCreator = await fetchIssueCreator(
+    getIssueDetails?.authorId as string
+  );
   if (!getIssueDetails) notFound();
 
   return (
@@ -36,7 +46,10 @@ const IssueDetailPage = async ({ params }: Props) => {
       gap={"5"}
     >
       <Box className="md:col-span-4">
-        <IssueDetails issue={getIssueDetails} />
+        <IssueDetails
+          issue={getIssueDetails}
+          author={getIssueCreator ?? undefined}
+        />
       </Box>
       {session && (
         <Box>
