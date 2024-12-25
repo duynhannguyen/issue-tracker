@@ -2,6 +2,7 @@
 
 import {
   Avatar,
+  Badge,
   Box,
   Container,
   DropdownMenu,
@@ -14,6 +15,38 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaBug } from "react-icons/fa6";
 import { Skeleton } from "@/app/components";
+import { Bell } from "lucide-react";
+import { Status } from "@prisma/client";
+
+type NotificationProps = {
+  content: string;
+  status: Status;
+};
+type NotificationBoxProps = {
+  notifications: NotificationProps[];
+};
+const test: NotificationProps[] = [
+  { content: "Your account settings have been updated.", status: Status.OPEN },
+  { content: "Payment failed, please try again.", status: Status.IN_PROGRESS },
+  {
+    content: "Your subscription has been successfully renewed.",
+    status: Status.CLOSED,
+  },
+  { content: "New message from support team.", status: Status.OPEN },
+  {
+    content: "Server maintenance scheduled for tonight.",
+    status: Status.CLOSED,
+  },
+  {
+    content: "Profile photo uploaded successfully.",
+    status: Status.IN_PROGRESS,
+  },
+  { content: "You have a new friend request.", status: Status.OPEN },
+  { content: "Order #1234 has been shipped.", status: Status.CLOSED },
+  { content: "Password reset request received.", status: Status.IN_PROGRESS },
+  { content: "Welcome to our platform!", status: Status.OPEN },
+];
+
 const NavBar = () => {
   return (
     <nav className=" space-x-6 border-b mb-5 px-5 py-3 ">
@@ -29,7 +62,13 @@ const NavBar = () => {
             </Link>
             <NavLinks />
           </Flex>
-          <AuthStatus />
+          <Flex
+            align={"center"}
+            gap={"3"}
+          >
+            <NotificationBox notifications={test} />
+            <AuthStatus />
+          </Flex>
         </Flex>
       </Container>
     </nav>
@@ -61,9 +100,54 @@ const NavLinks = () => {
   );
 };
 
+type StatusMap = Record<
+  Status,
+  { label: string; color: "red" | "violet" | "green" }
+>;
+
+const NotificationBox = ({ notifications }: NotificationBoxProps) => {
+  const statusMap: StatusMap = {
+    OPEN: { label: "OPEN", color: "red" },
+    IN_PROGRESS: { label: "IN_PROGRESS", color: "violet" },
+    CLOSED: { label: "CLOSED", color: "green" },
+  };
+
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger>
+        <Bell size={18} />
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content>
+        {notifications.length === 0 && (
+          <Text
+            size={"1"}
+            className="p-4"
+          >
+            Notification Box is empty
+          </Text>
+        )}
+        {notifications.map((noti, index) => (
+          <div key={index}>
+            <Text
+              size={"2"}
+              as="p"
+              className="p-2 hover:bg-gray-100 transition-all 0.5s ease-in-out text-pretty	"
+            >
+              Issue <Badge color="gray">{noti.content}</Badge> has been{" "}
+              <Badge color={statusMap[noti.status].color}>
+                {" "}
+                {statusMap[noti.status].label}{" "}
+              </Badge>
+            </Text>
+          </div>
+        ))}
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
+  );
+};
+
 const AuthStatus = () => {
   const { status, data: session } = useSession();
-
   if (status === "loading") return <Skeleton width={"3rem"} />;
   if (status === "unauthenticated")
     return (
@@ -78,13 +162,15 @@ const AuthStatus = () => {
     <Box>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
-          <Avatar
-            src={session!.user?.image!}
-            fallback="?"
-            size={"2"}
-            radius="full"
-            className="cursor-pointer"
-          />
+          <Text>
+            <Avatar
+              src={session?.user.image!}
+              fallback={"?"}
+              size={"2"}
+              radius="full"
+              className="cursor-pointer "
+            />
+          </Text>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
           <DropdownMenu.Label>
