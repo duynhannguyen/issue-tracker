@@ -1,6 +1,6 @@
 import { Priority, Status } from "@prisma/client";
 import { Badge, Flex } from "@radix-ui/themes";
-import React, { ReactNode } from "react";
+import React from "react";
 import { SignalHigh, SignalLow, SignalMedium } from "lucide-react";
 type StatusMap = Record<
   Status,

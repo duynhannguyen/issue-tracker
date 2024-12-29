@@ -17,6 +17,8 @@ import { FaBug } from "react-icons/fa6";
 import { Skeleton } from "@/app/components";
 import { Bell } from "lucide-react";
 import { Status } from "@prisma/client";
+import { useEffect } from "react";
+import { socket } from "./helper/socket";
 
 type NotificationProps = {
   content: string;
@@ -48,6 +50,17 @@ const test: NotificationProps[] = [
 ];
 
 const NavBar = () => {
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("socket", socket.id);
+      console.log(1);
+      // const a = {
+      //   content: "Your account settings have been updated.",
+      //   status: Status.OPEN,
+      // };
+    });
+    socket.emit("sendmsg", "hello");
+  }, []);
   return (
     <nav className=" space-x-6 border-b mb-5 px-5 py-3 ">
       <Container>
