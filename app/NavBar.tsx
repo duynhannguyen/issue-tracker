@@ -15,49 +15,139 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaBug } from "react-icons/fa6";
 import { Skeleton } from "@/app/components";
-import { Bell } from "lucide-react";
-import { Status } from "@prisma/client";
+import { Bell, SignalHigh, SignalLow, SignalMedium } from "lucide-react";
+import { Priority, Status } from "@prisma/client";
 import { useEffect } from "react";
 import { socket } from "./helper/socket";
+import formatDate from "./helper/formatDate";
 
-type NotificationProps = {
+type IssueNoti = {
+  eventKind: "Issue";
+  action: "Create" | "Update" | "Delete" | "Change";
   content: string;
-  status: Status;
+  priority?: Priority;
+  status?: Status;
+  time?: Date;
 };
+type AccountNoti = {
+  eventKind: "Account";
+  action: "Create" | "Update" | "Delete" | "Change";
+  content: string;
+  time?: Date;
+};
+
+type NotificationItem = IssueNoti | AccountNoti;
+
 type NotificationBoxProps = {
-  notifications: NotificationProps[];
+  notifications: NotificationItem[];
 };
-const test: NotificationProps[] = [
-  { content: "Your account settings have been updated.", status: Status.OPEN },
-  { content: "Payment failed, please try again.", status: Status.IN_PROGRESS },
+type StatusMap = Record<
+  Status,
+  { label: string; color: "red" | "violet" | "green" }
+>;
+
+type PriorityMap = Record<
+  Priority,
   {
-    content: "Your subscription has been successfully renewed.",
-    status: Status.CLOSED,
+    label: string;
+    color: "red" | "violet" | "green";
+    icon: JSX.Element;
+  }
+>;
+
+const test: NotificationItem[] = [
+  {
+    eventKind: "Issue",
+    action: "Create",
+    content: "New bug reported in login system",
+    priority: Priority.HIGH,
+    status: Status.OPEN,
+    time: new Date("2024-01-15T10:30:00"),
   },
-  { content: "New message from support team.", status: Status.OPEN },
   {
-    content: "Server maintenance scheduled for tonight.",
-    status: Status.CLOSED,
+    eventKind: "Issue",
+    action: "Create",
+    content: "New bug reported in login system",
+    priority: Priority.HIGH,
+    status: Status.OPEN,
+    time: new Date("2024-01-15T10:30:00"),
   },
   {
-    content: "Profile photo uploaded successfully.",
+    eventKind: "Issue",
+    action: "Create",
+    content: "New bug reported in login system",
+    priority: Priority.HIGH,
+    status: Status.OPEN,
+    time: new Date("2024-01-15T10:30:00"),
+  },
+  {
+    eventKind: "Account",
+    action: "Update",
+    content: "User profile updated: John Doe",
+    time: new Date("2024-01-15T11:00:00"),
+  },
+  {
+    eventKind: "Issue",
+    action: "Update",
+    content: "Performance issue status changed",
+    priority: Priority.MEDIUM,
     status: Status.IN_PROGRESS,
+    time: new Date("2024-01-15T14:20:00"),
   },
-  { content: "You have a new friend request.", status: Status.OPEN },
-  { content: "Order #1234 has been shipped.", status: Status.CLOSED },
-  { content: "Password reset request received.", status: Status.IN_PROGRESS },
-  { content: "Welcome to our platform!", status: Status.OPEN },
+  {
+    eventKind: "Account",
+    action: "Delete",
+    content: "Account deleted: jane@example.com",
+    time: new Date("2024-01-15T15:45:00"),
+  },
+  {
+    eventKind: "Issue",
+    action: "Change",
+    content: "Security vulnerability found",
+    priority: Priority.HIGH,
+    status: Status.OPEN,
+    time: new Date("2024-01-15T16:30:00"),
+  },
+  {
+    eventKind: "Account",
+    action: "Create",
+    content: "New account created: mary@example.com",
+    time: new Date("2024-01-15T17:00:00"),
+  },
+  {
+    eventKind: "Issue",
+    action: "Delete",
+    content: "Removed duplicate bug report",
+    priority: Priority.LOW,
+    status: Status.CLOSED,
+    time: new Date("2024-01-15T18:15:00"),
+  },
+  {
+    eventKind: "Account",
+    action: "Change",
+    content: "Role updated: admin privileges granted",
+    time: new Date("2024-01-15T19:30:00"),
+  },
+  {
+    eventKind: "Issue",
+    action: "Create",
+    content: "New feature request submitted",
+    priority: Priority.MEDIUM,
+    status: Status.OPEN,
+    time: new Date("2024-01-15T20:45:00"),
+  },
+  {
+    eventKind: "Account",
+    action: "Update",
+    content: "Password reset requested",
+    time: new Date("2024-01-15T21:00:00"),
+  },
 ];
 
 const NavBar = () => {
   useEffect(() => {
     socket.on("connect", () => {
       console.log("socket", socket.id);
-      console.log(1);
-      // const a = {
-      //   content: "Your account settings have been updated.",
-      //   status: Status.OPEN,
-      // };
     });
     socket.emit("sendmsg", "hello");
   }, []);
@@ -113,11 +203,6 @@ const NavLinks = () => {
   );
 };
 
-type StatusMap = Record<
-  Status,
-  { label: string; color: "red" | "violet" | "green" }
->;
-
 const NotificationBox = ({ notifications }: NotificationBoxProps) => {
   const statusMap: StatusMap = {
     OPEN: { label: "OPEN", color: "red" },
@@ -125,16 +210,27 @@ const NotificationBox = ({ notifications }: NotificationBoxProps) => {
     CLOSED: { label: "CLOSED", color: "green" },
   };
 
+  const priorityMap: PriorityMap = {
+    HIGH: { label: "HIGH", color: "red", icon: <SignalHigh size={24} /> },
+    MEDIUM: {
+      label: "MEDIUM",
+      color: "violet",
+      icon: <SignalMedium size={24} />,
+    },
+    LOW: { label: "LOW", color: "green", icon: <SignalLow size={24} /> },
+  };
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger>
         <Bell size={18} />
       </DropdownMenu.Trigger>
-      <DropdownMenu.Content>
+      <DropdownMenu.Content className="w-96 h-[400px]">
         {notifications.length === 0 && (
           <Text
             size={"1"}
             className="p-4"
+            as="div"
           >
             Notification Box is empty
           </Text>
@@ -143,14 +239,51 @@ const NotificationBox = ({ notifications }: NotificationBoxProps) => {
           <div key={index}>
             <Text
               size={"2"}
-              as="p"
+              as="div"
               className="p-2 hover:bg-gray-100 transition-all 0.5s ease-in-out text-pretty	"
             >
-              Issue <Badge color="gray">{noti.content}</Badge> has been{" "}
-              <Badge color={statusMap[noti.status].color}>
-                {" "}
-                {statusMap[noti.status].label}{" "}
-              </Badge>
+              {noti.eventKind === "Issue" && (
+                <Flex
+                  direction={"column"}
+                  gap={"2"}
+                >
+                  <Flex justify={"between"}>
+                    {noti.status && (
+                      <Badge
+                        size="1"
+                        color={statusMap[noti.status].color}
+                      >
+                        Status: {statusMap[noti.status].label}
+                      </Badge>
+                    )}
+
+                    {noti.priority && (
+                      <Badge color={priorityMap[noti.priority].color}>
+                        Priority: {priorityMap[noti.priority].label}
+                      </Badge>
+                    )}
+                  </Flex>
+                  <Text as="div">
+                    The Issue{" "}
+                    <Badge
+                      className="w-fit"
+                      color="gray"
+                    >
+                      {noti.content}
+                    </Badge>
+                    {noti.action !== "Change" && ` has been ${noti.action} `}
+                    {noti.action === "Change" &&
+                      `has been changed to ${noti.status || noti.priority}`}
+                  </Text>
+                  <Text
+                    size="1"
+                    as="div"
+                    className="text-gray-400"
+                  >
+                    {noti.time && formatDate(noti.time)}
+                  </Text>
+                </Flex>
+              )}
             </Text>
           </div>
         ))}
