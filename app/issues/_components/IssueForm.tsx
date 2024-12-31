@@ -14,12 +14,14 @@ import {
 } from "@radix-ui/themes";
 import axios from "axios";
 import "easymde/dist/easymde.min.css";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import SimpleMDE from "react-simplemde-editor";
 import { z } from "zod";
 import { useSession } from "next-auth/react";
+import { socket } from "@/app/helper/socket";
+import { IssueNoti } from "@/app/NavBar";
 type IssueFormData = z.infer<typeof createIssueSchema>;
 type updateIssueData = z.infer<typeof updateIssueSchema>;
 type IssueFormProps = {
@@ -29,6 +31,11 @@ type IssueFormProps = {
 
 const IssueForm = ({ issue, assignee }: IssueFormProps) => {
   const schema = issue ? updateIssueSchema : createIssueSchema;
+
+  const pathName = usePathname();
+
+  const lastSegment = pathName.split("/");
+
   const { data: session } = useSession();
   const {
     register,
@@ -50,11 +57,25 @@ const IssueForm = ({ issue, assignee }: IssueFormProps) => {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      setSubmitting(true);
+      // setSubmitting(true);
       if (issue) await axios.patch(`/api/issue/${issue.id}`, data);
-      else await axios.post("/api/issue", data);
+      else {
+        const submitIssue = await axios.post("/api/issue", data);
+        const newIssueNoti: IssueNoti = {
+          action: "Create",
+          eventKind: "Issue",
+          time: submitIssue.data.createdAt,
+          content: submitIssue.data.title,
+          priority: submitIssue.data.priority,
+          status: submitIssue.data.status,
+        };
+        console.log("submitIssue", submitIssue);
+        if (submitIssue.status === 201) {
+          socket.emit("new-issue", newIssueNoti);
+        }
+      }
 
-      router.push("/issues/list");
+      // router.push("/issues/list");
     } catch (error) {
       setSubmitting(false);
       setError("An unexpected error occurred. ");
@@ -64,7 +85,6 @@ const IssueForm = ({ issue, assignee }: IssueFormProps) => {
   const isAssignee = assignee?.filter(
     (user) => user.id === issue?.assignedToUserId
   );
-  console.log("isAssignee", isAssignee);
 
   return (
     <div className="max-w-lg ">
@@ -109,9 +129,9 @@ const IssueForm = ({ issue, assignee }: IssueFormProps) => {
                     size="2"
                     defaultValue={issue?.priority || "MEDIUM"}
                     disabled={
-                      issue?.status === "CLOSED" ||
-                      !isAssignee ||
-                      issue?.authorId !== session?.user.id
+                      !lastSegment.includes("new") &&
+                      (issue?.status === "CLOSED" ||
+                        (issue?.authorId !== session?.user.id && !isAssignee))
                     }
                   >
                     <Select.Trigger />
@@ -152,7 +172,7 @@ const IssueForm = ({ issue, assignee }: IssueFormProps) => {
                       size="2"
                       defaultValue={issue.status}
                       disabled={
-                        !isAssignee || issue.authorId !== session?.user.id
+                        issue?.authorId !== session?.user.id && !isAssignee
                       }
                     >
                       <Select.Trigger />

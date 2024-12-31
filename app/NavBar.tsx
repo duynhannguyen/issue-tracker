@@ -2,7 +2,6 @@
 
 import {
   Avatar,
-  Badge,
   Box,
   Container,
   DropdownMenu,
@@ -19,9 +18,9 @@ import { Bell, SignalHigh, SignalLow, SignalMedium } from "lucide-react";
 import { Priority, Status } from "@prisma/client";
 import { useEffect } from "react";
 import { socket } from "./helper/socket";
-import formatDate from "./helper/formatDate";
+import IssueNotiLayout from "./components/IssueNotiLayout";
 
-type IssueNoti = {
+export type IssueNoti = {
   eventKind: "Issue";
   action: "Create" | "Update" | "Delete" | "Change";
   content: string;
@@ -146,10 +145,9 @@ const test: NotificationItem[] = [
 
 const NavBar = () => {
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log("socket", socket.id);
+    socket.on("notify-new-issue", (noti) => {
+      console.log("noti", noti);
     });
-    socket.emit("sendmsg", "hello");
   }, []);
   return (
     <nav className=" space-x-6 border-b mb-5 px-5 py-3 ">
@@ -243,46 +241,16 @@ const NotificationBox = ({ notifications }: NotificationBoxProps) => {
               className="p-2 hover:bg-gray-100 transition-all 0.5s ease-in-out text-pretty	"
             >
               {noti.eventKind === "Issue" && (
-                <Flex
-                  direction={"column"}
-                  gap={"2"}
-                >
-                  <Flex justify={"between"}>
-                    {noti.status && (
-                      <Badge
-                        size="1"
-                        color={statusMap[noti.status].color}
-                      >
-                        Status: {statusMap[noti.status].label}
-                      </Badge>
-                    )}
-
-                    {noti.priority && (
-                      <Badge color={priorityMap[noti.priority].color}>
-                        Priority: {priorityMap[noti.priority].label}
-                      </Badge>
-                    )}
-                  </Flex>
-                  <Text as="div">
-                    The Issue{" "}
-                    <Badge
-                      className="w-fit"
-                      color="gray"
-                    >
-                      {noti.content}
-                    </Badge>
-                    {noti.action !== "Change" && ` has been ${noti.action} `}
-                    {noti.action === "Change" &&
-                      `has been changed to ${noti.status || noti.priority}`}
-                  </Text>
-                  <Text
-                    size="1"
-                    as="div"
-                    className="text-gray-400"
-                  >
-                    {noti.time && formatDate(noti.time)}
-                  </Text>
-                </Flex>
+                <IssueNotiLayout
+                  action={noti.action}
+                  content={noti.content}
+                  eventKind={noti.eventKind}
+                  status={noti.status}
+                  priority={noti.priority}
+                  time={noti.time}
+                  notiStatus={statusMap}
+                  priorityStatus={priorityMap}
+                />
               )}
             </Text>
           </div>

@@ -2,11 +2,11 @@ import { Priority, Status } from "@prisma/client";
 import { Badge, Flex } from "@radix-ui/themes";
 import React from "react";
 import { SignalHigh, SignalLow, SignalMedium } from "lucide-react";
-type StatusMap = Record<
+export type StatusMap = Record<
   Status,
   { label: string; color: "red" | "violet" | "green" }
 >;
-type PriorityMap = Record<
+export type PriorityMap = Record<
   Priority,
   {
     label: string;
