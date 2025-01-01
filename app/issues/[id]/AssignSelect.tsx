@@ -20,10 +20,16 @@ const AssignSelect = ({ issue }: { issue: Issue }) => {
   if (error) return null;
   const assignIssue = async (userId: string) => {
     try {
-      await axios.patch(`/api/issue/${issue.id}`, {
-        assignedToUserId: userId === "unassigned" ? null : userId,
-      });
-      toast.success("Changes saved successfully");
+      toast.promise(
+        axios.patch(`/api/issue/${issue.id}`, {
+          assignedToUserId: userId === "unassigned" ? null : userId,
+        }),
+        {
+          loading: "Assigning...",
+          success: "Assign successfully",
+          error: "Assign could not be changes",
+        }
+      );
     } catch (error) {
       toast.error("Changes could not be saved");
     }

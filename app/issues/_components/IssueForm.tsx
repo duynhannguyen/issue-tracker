@@ -61,20 +61,10 @@ const IssueForm = ({ issue, assignee }: IssueFormProps) => {
       if (issue) await axios.patch(`/api/issue/${issue.id}`, data);
       else {
         const submitIssue = await axios.post("/api/issue", data);
-        const newIssueNoti: IssueNoti = {
-          action: "Create",
-          eventKind: "Issue",
-          time: submitIssue.data.createdAt,
-          content: submitIssue.data.title,
-          priority: submitIssue.data.priority,
-          status: submitIssue.data.status,
-        };
-        console.log("submitIssue", submitIssue);
         if (submitIssue.status === 201) {
-          socket.emit("new-issue", newIssueNoti);
+          socket.emit("new-issue", submitIssue.data.issueNoti);
         }
       }
-
       // router.push("/issues/list");
     } catch (error) {
       setSubmitting(false);

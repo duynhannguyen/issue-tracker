@@ -37,6 +37,28 @@ enum Priority {
   LOW
 }
 
+enum IssueAction {
+  CREATE
+  UPDATE
+  DELETE
+  CHANGE
+}
+
+enum EventKind {
+  ISSUE
+  ACCOUNT
+}
+
+model IssueNoti {
+  id        Int         @id @default(autoincrement())
+  action    IssueAction
+  eventKind EventKind
+  content   String
+  priority  Priority
+  status    Status
+  time      DateTime
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String  @map("user_id")
@@ -76,7 +98,7 @@ model User {
   accounts       Account[]
   sessions       Session[]
   assignedIssues Issue[]
-  createdIssues  Issue[]    @relation( name:"author")
+  createdIssues  Issue[]   @relation(name: "author")
 
   @@map("users")
 }

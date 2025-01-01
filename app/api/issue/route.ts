@@ -22,6 +22,22 @@ export async function POST(request: NextRequest) {
       priority: body.priority,
     },
   });
+  const createNoti = await prisma.issueNoti.create({
+    data: {
+      action: "CREATE",
+      eventKind: "ISSUE",
+      time: newIssue.createdAt,
+      content: newIssue.title,
+      priority: newIssue.priority,
+      status: newIssue.status,
+    },
+  });
 
-  return NextResponse.json(newIssue, { status: 201 });
+  return NextResponse.json(
+    {
+      newIssue,
+      issueNoti: createNoti,
+    },
+    { status: 201 }
+  );
 }
