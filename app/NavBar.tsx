@@ -13,7 +13,7 @@ import { VscClose } from "react-icons/vsc";
 import classNames from "classnames";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FaBug } from "react-icons/fa6";
 import { Skeleton } from "@/app/components";
 import {
@@ -36,6 +36,7 @@ export type IssueNoti = {
   priority?: Priority;
   status?: Status;
   time?: Date;
+  issueId: number;
 };
 type AccountNoti = {
   eventKind: "Account";
@@ -71,6 +72,7 @@ const test: NotificationItem[] = [
     priority: Priority.HIGH,
     status: Status.OPEN,
     time: new Date("2024-01-15T10:30:00"),
+    issueId: 30,
   },
   {
     eventKind: "Issue",
@@ -79,6 +81,7 @@ const test: NotificationItem[] = [
     priority: Priority.HIGH,
     status: Status.OPEN,
     time: new Date("2024-01-15T10:30:00"),
+    issueId: 30,
   },
   {
     eventKind: "Issue",
@@ -87,6 +90,7 @@ const test: NotificationItem[] = [
     priority: Priority.HIGH,
     status: Status.OPEN,
     time: new Date("2024-01-15T10:30:00"),
+    issueId: 30,
   },
   {
     eventKind: "Account",
@@ -101,12 +105,7 @@ const test: NotificationItem[] = [
     priority: Priority.MEDIUM,
     status: Status.IN_PROGRESS,
     time: new Date("2024-01-15T14:20:00"),
-  },
-  {
-    eventKind: "Account",
-    action: "Delete",
-    content: "Account deleted: jane@example.com",
-    time: new Date("2024-01-15T15:45:00"),
+    issueId: 30,
   },
   {
     eventKind: "Issue",
@@ -115,12 +114,7 @@ const test: NotificationItem[] = [
     priority: Priority.HIGH,
     status: Status.OPEN,
     time: new Date("2024-01-15T16:30:00"),
-  },
-  {
-    eventKind: "Account",
-    action: "Create",
-    content: "New account created: mary@example.com",
-    time: new Date("2024-01-15T17:00:00"),
+    issueId: 30,
   },
   {
     eventKind: "Issue",
@@ -129,13 +123,9 @@ const test: NotificationItem[] = [
     priority: Priority.LOW,
     status: Status.CLOSED,
     time: new Date("2024-01-15T18:15:00"),
+    issueId: 30,
   },
-  {
-    eventKind: "Account",
-    action: "Change",
-    content: "Role updated: admin privileges granted",
-    time: new Date("2024-01-15T19:30:00"),
-  },
+
   {
     eventKind: "Issue",
     action: "Create",
@@ -143,6 +133,7 @@ const test: NotificationItem[] = [
     priority: Priority.MEDIUM,
     status: Status.OPEN,
     time: new Date("2024-01-15T20:45:00"),
+    issueId: 30,
   },
   {
     eventKind: "Account",
@@ -215,16 +206,23 @@ const NotificationBox = ({ notifications }: NotificationBoxProps) => {
             align={"center"}
             gap={"3"}
           >
-            <IssueNotiLayout
-              action={noti.action}
-              content={noti.content}
-              eventKind={noti.eventKind}
-              status={noti.status}
-              priority={noti.priority}
-              time={noti.time}
-              notiStatus={statusMap}
-              priorityStatus={priorityMap}
-            />
+            <Text
+              as="div"
+              className="pointer-events-none"
+            >
+              <IssueNotiLayout
+                action={noti.action}
+                content={noti.content}
+                eventKind={noti.eventKind}
+                status={noti.status}
+                priority={noti.priority}
+                time={noti.time}
+                notiStatus={statusMap}
+                priorityStatus={priorityMap}
+                issueId={noti.issueId}
+              />
+            </Text>
+
             <Button
               variant="solid"
               size={"1"}
@@ -232,7 +230,7 @@ const NotificationBox = ({ notifications }: NotificationBoxProps) => {
               color="red"
             >
               <VscClose
-                className="text-xs"
+                className="text-xs cursor-pointer"
                 color="white"
               />
             </Button>
@@ -242,6 +240,8 @@ const NotificationBox = ({ notifications }: NotificationBoxProps) => {
       );
     });
   }, []);
+  const router = useRouter();
+
   const statusMap: StatusMap = {
     OPEN: { label: "OPEN", color: "red" },
     IN_PROGRESS: { label: "IN_PROGRESS", color: "violet" },
@@ -291,6 +291,7 @@ const NotificationBox = ({ notifications }: NotificationBoxProps) => {
                     time={noti.time}
                     notiStatus={statusMap}
                     priorityStatus={priorityMap}
+                    issueId={30}
                   />
                 )}
               </Text>
@@ -300,7 +301,7 @@ const NotificationBox = ({ notifications }: NotificationBoxProps) => {
       </DropdownMenu.Root>
       <Toaster
         position="top-right"
-        // reverseOrder={false}
+        reverseOrder={false}
       />
     </>
   );

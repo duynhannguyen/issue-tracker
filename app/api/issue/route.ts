@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(
     {
       newIssue,
-      issueNoti: createNoti,
+      issueNoti: { ...createNoti, issueId: newIssue.id },
     },
     { status: 201 }
   );

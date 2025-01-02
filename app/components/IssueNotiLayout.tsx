@@ -14,12 +14,13 @@ const IssueNotiLayout = ({
   priority,
   notiStatus,
   priorityStatus,
+  issueId,
 }: IssueNoti & {
   notiStatus: StatusMap;
   priorityStatus: PriorityMap;
 }) => {
   return (
-    <Link href={"http://localhost:3000/issues/list"}>
+    <Link href={`${process.env.NEXT_PUBLIC_URL}/issues/${issueId}`}>
       <Flex
         direction={"column"}
         gap={"2"}
