@@ -13,21 +13,16 @@ import { VscClose } from "react-icons/vsc";
 import classNames from "classnames";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { FaBug } from "react-icons/fa6";
 import { Skeleton } from "@/app/components";
-import {
-  Bell,
-  Flashlight,
-  SignalHigh,
-  SignalLow,
-  SignalMedium,
-} from "lucide-react";
+import { Bell, SignalHigh, SignalLow, SignalMedium } from "lucide-react";
 import { Priority, Status } from "@prisma/client";
 import { useEffect } from "react";
 import { socket } from "./helper/socket";
 import IssueNotiLayout from "./components/IssueNotiLayout";
 import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
 
 export type IssueNoti = {
   eventKind: "Issue";
@@ -239,9 +234,14 @@ const NotificationBox = ({ notifications }: NotificationBoxProps) => {
         { id: noti.id, duration: 5000 }
       );
     });
-  }, []);
-  const router = useRouter();
-
+  });
+  const getNotiContent = async () => {
+    try {
+      const a = await axios.get("/api/noti/1");
+      console.log("a", a);
+    } catch (error) {}
+  };
+  getNotiContent();
   const statusMap: StatusMap = {
     OPEN: { label: "OPEN", color: "red" },
     IN_PROGRESS: { label: "IN_PROGRESS", color: "violet" },

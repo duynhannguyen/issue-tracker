@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
       content: newIssue.title,
       priority: newIssue.priority,
       status: newIssue.status,
+      userId: session.user.id,
     },
   });
 
