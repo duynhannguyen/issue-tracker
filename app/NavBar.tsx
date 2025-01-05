@@ -23,9 +23,10 @@ import { socket } from "./helper/socket";
 import IssueNotiLayout from "./components/IssueNotiLayout";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 export type IssueNoti = {
-  eventKind: "Issue";
+  eventKind: "ISSUE";
   action: "Create" | "Update" | "Delete" | "Change";
   content: string;
   priority?: Priority;
@@ -42,9 +43,6 @@ type AccountNoti = {
 
 type NotificationItem = IssueNoti | AccountNoti;
 
-type NotificationBoxProps = {
-  notifications: NotificationItem[];
-};
 type StatusMap = Record<
   Status,
   { label: string; color: "red" | "violet" | "green" }
@@ -58,85 +56,6 @@ type PriorityMap = Record<
     icon: JSX.Element;
   }
 >;
-
-const test: NotificationItem[] = [
-  {
-    eventKind: "Issue",
-    action: "Create",
-    content: "New bug reported in login system",
-    priority: Priority.HIGH,
-    status: Status.OPEN,
-    time: new Date("2024-01-15T10:30:00"),
-    issueId: 30,
-  },
-  {
-    eventKind: "Issue",
-    action: "Create",
-    content: "New bug reported in login system",
-    priority: Priority.HIGH,
-    status: Status.OPEN,
-    time: new Date("2024-01-15T10:30:00"),
-    issueId: 30,
-  },
-  {
-    eventKind: "Issue",
-    action: "Create",
-    content: "New bug reported in login system",
-    priority: Priority.HIGH,
-    status: Status.OPEN,
-    time: new Date("2024-01-15T10:30:00"),
-    issueId: 30,
-  },
-  {
-    eventKind: "Account",
-    action: "Update",
-    content: "User profile updated: John Doe",
-    time: new Date("2024-01-15T11:00:00"),
-  },
-  {
-    eventKind: "Issue",
-    action: "Update",
-    content: "Performance issue status changed",
-    priority: Priority.MEDIUM,
-    status: Status.IN_PROGRESS,
-    time: new Date("2024-01-15T14:20:00"),
-    issueId: 30,
-  },
-  {
-    eventKind: "Issue",
-    action: "Change",
-    content: "Security vulnerability found",
-    priority: Priority.HIGH,
-    status: Status.OPEN,
-    time: new Date("2024-01-15T16:30:00"),
-    issueId: 30,
-  },
-  {
-    eventKind: "Issue",
-    action: "Delete",
-    content: "Removed duplicate bug report",
-    priority: Priority.LOW,
-    status: Status.CLOSED,
-    time: new Date("2024-01-15T18:15:00"),
-    issueId: 30,
-  },
-
-  {
-    eventKind: "Issue",
-    action: "Create",
-    content: "New feature request submitted",
-    priority: Priority.MEDIUM,
-    status: Status.OPEN,
-    time: new Date("2024-01-15T20:45:00"),
-    issueId: 30,
-  },
-  {
-    eventKind: "Account",
-    action: "Update",
-    content: "Password reset requested",
-    time: new Date("2024-01-15T21:00:00"),
-  },
-];
 
 const NavBar = () => {
   return (
@@ -157,7 +76,7 @@ const NavBar = () => {
             align={"center"}
             gap={"3"}
           >
-            <NotificationBox notifications={test} />
+            <NotificationBox />
             <AuthStatus />
           </Flex>
         </Flex>
@@ -191,7 +110,20 @@ const NavLinks = () => {
   );
 };
 
-const NotificationBox = ({ notifications }: NotificationBoxProps) => {
+const NotificationBox = () => {
+  const {
+    data: notiIssue,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery<NotificationItem[]>({
+    queryKey: ["issueNoti"],
+    queryFn: () =>
+      axios.get(`/api/noti/${session?.user.id}`).then((res) => res.data),
+    staleTime: 60 * 1000,
+    retry: 3,
+  });
+
   useEffect(() => {
     socket.on("notify-new-issue", (noti) => {
       toast.custom(
@@ -235,13 +167,10 @@ const NotificationBox = ({ notifications }: NotificationBoxProps) => {
       );
     });
   });
-  const getNotiContent = async () => {
-    try {
-      const a = await axios.get("/api/noti/1");
-      console.log("a", a);
-    } catch (error) {}
-  };
-  getNotiContent();
+
+  const { data: session } = useSession();
+
+  console.log(notiIssue);
   const statusMap: StatusMap = {
     OPEN: { label: "OPEN", color: "red" },
     IN_PROGRESS: { label: "IN_PROGRESS", color: "violet" },
@@ -257,31 +186,32 @@ const NotificationBox = ({ notifications }: NotificationBoxProps) => {
     },
     LOW: { label: "LOW", color: "green", icon: <SignalLow size={24} /> },
   };
-
+  if (error) return null;
   return (
     <>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
           <Bell size={18} />
         </DropdownMenu.Trigger>
-        <DropdownMenu.Content className="w-96 h-[400px]">
-          {notifications.length === 0 && (
+        <DropdownMenu.Content className="w-96 ">
+          {error ? (
             <Text
               size={"1"}
               className="p-4"
               as="div"
             >
-              Notification Box is empty
+              Something went wrong
             </Text>
-          )}
-          {notifications.map((noti, index) => (
+          ) : null}
+
+          {notiIssue?.map((noti, index) => (
             <div key={index}>
               <Text
                 size={"2"}
                 as="div"
                 className="p-2 hover:bg-gray-100 transition-all 0.5s ease-in-out text-pretty	"
               >
-                {noti.eventKind === "Issue" && (
+                {noti.eventKind === "ISSUE" && (
                   <IssueNotiLayout
                     action={noti.action}
                     content={noti.content}
@@ -291,7 +221,7 @@ const NotificationBox = ({ notifications }: NotificationBoxProps) => {
                     time={noti.time}
                     notiStatus={statusMap}
                     priorityStatus={priorityMap}
-                    issueId={30}
+                    issueId={noti.issueId}
                   />
                 )}
               </Text>
