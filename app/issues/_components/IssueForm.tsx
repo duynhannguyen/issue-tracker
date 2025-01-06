@@ -21,7 +21,6 @@ import SimpleMDE from "react-simplemde-editor";
 import { z } from "zod";
 import { useSession } from "next-auth/react";
 import { socket } from "@/app/helper/socket";
-import { IssueNoti } from "@/app/NavBar";
 type IssueFormData = z.infer<typeof createIssueSchema>;
 type updateIssueData = z.infer<typeof updateIssueSchema>;
 type IssueFormProps = {

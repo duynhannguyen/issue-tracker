@@ -111,17 +111,19 @@ const NavLinks = () => {
 };
 
 const NotificationBox = () => {
+  const { data: session } = useSession();
+  // console.log(session);
   const {
     data: notiIssue,
     isLoading,
     error,
     refetch,
   } = useQuery<NotificationItem[]>({
-    queryKey: ["issueNoti"],
-    queryFn: () =>
-      axios.get(`/api/noti/${session?.user.id}`).then((res) => res.data),
+    queryKey: ["issueNoti", session?.user.id],
+    queryFn: async () =>
+      await axios.get(`/api/noti/${session?.user.id}`).then((res) => res.data),
     staleTime: 60 * 1000,
-    retry: 3,
+    enabled: !!session?.user.id,
   });
 
   useEffect(() => {
@@ -168,9 +170,6 @@ const NotificationBox = () => {
     });
   });
 
-  const { data: session } = useSession();
-
-  console.log(notiIssue);
   const statusMap: StatusMap = {
     OPEN: { label: "OPEN", color: "red" },
     IN_PROGRESS: { label: "IN_PROGRESS", color: "violet" },
@@ -191,7 +190,7 @@ const NotificationBox = () => {
     <>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
-          <Bell size={18} />
+          <Bell size={19} />
         </DropdownMenu.Trigger>
         <DropdownMenu.Content className="w-96 ">
           {error ? (

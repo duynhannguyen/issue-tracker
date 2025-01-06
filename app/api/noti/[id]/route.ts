@@ -13,7 +13,6 @@ export const GET = async (
     };
   }
 ) => {
-  console.log(1);
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({}, { status: 401 });
 
@@ -26,7 +25,7 @@ export const GET = async (
     },
   });
   console.log("nhan", noti);
-  console.log("session", params.id);
+  console.log("session", params);
   if (!noti)
     return NextResponse.json("Unexpected error", {
       status: 404,

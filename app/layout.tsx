@@ -26,8 +26,8 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className={inter.variable}>
-        <QueryClientProvider>
-          <AuthProvider>
+        <AuthProvider>
+          <QueryClientProvider>
             <Theme
               accentColor="amber"
               grayColor="gray"
@@ -37,8 +37,8 @@ export default function RootLayout({
                 <Container>{children}</Container>
               </main>
             </Theme>
-          </AuthProvider>
-        </QueryClientProvider>
+          </QueryClientProvider>
+        </AuthProvider>
       </body>
     </html>
   );
