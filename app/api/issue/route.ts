@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
       priority: newIssue.priority,
       status: newIssue.status,
       userId: session.user.id,
+      issueId: newIssue.id,
     },
   });
 

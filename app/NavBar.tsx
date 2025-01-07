@@ -24,6 +24,7 @@ import IssueNotiLayout from "./components/IssueNotiLayout";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import IssueNotiSkeleton from "./components/IssueNotiSkeleton";
 
 export type IssueNoti = {
   eventKind: "ISSUE";
@@ -112,7 +113,6 @@ const NavLinks = () => {
 
 const NotificationBox = () => {
   const { data: session } = useSession();
-  // console.log(session);
   const {
     data: notiIssue,
     isLoading,
@@ -188,44 +188,56 @@ const NotificationBox = () => {
   if (error) return null;
   return (
     <>
-      <DropdownMenu.Root>
+      <DropdownMenu.Root
+        onOpenChange={(open) => {
+          if (open) {
+            refetch();
+          }
+        }}
+      >
         <DropdownMenu.Trigger>
           <Bell size={19} />
         </DropdownMenu.Trigger>
         <DropdownMenu.Content className="w-96 ">
-          {error ? (
-            <Text
-              size={"1"}
-              className="p-4"
-              as="div"
-            >
-              Something went wrong
-            </Text>
-          ) : null}
+          {isLoading ? (
+            <IssueNotiSkeleton />
+          ) : (
+            <>
+              {error ? (
+                <Text
+                  size={"1"}
+                  className="p-4"
+                  as="div"
+                >
+                  Something went wrong, please try again
+                </Text>
+              ) : null}
 
-          {notiIssue?.map((noti, index) => (
-            <div key={index}>
-              <Text
-                size={"2"}
-                as="div"
-                className="p-2 hover:bg-gray-100 transition-all 0.5s ease-in-out text-pretty	"
-              >
-                {noti.eventKind === "ISSUE" && (
-                  <IssueNotiLayout
-                    action={noti.action}
-                    content={noti.content}
-                    eventKind={noti.eventKind}
-                    status={noti.status}
-                    priority={noti.priority}
-                    time={noti.time}
-                    notiStatus={statusMap}
-                    priorityStatus={priorityMap}
-                    issueId={noti.issueId}
-                  />
-                )}
-              </Text>
-            </div>
-          ))}
+              {notiIssue?.map((noti, index) => (
+                <div key={index}>
+                  <Text
+                    size={"2"}
+                    as="div"
+                    className="p-2 hover:bg-gray-100 transition-all 0.5s ease-in-out text-pretty	"
+                  >
+                    {noti.eventKind === "ISSUE" && (
+                      <IssueNotiLayout
+                        action={noti.action}
+                        content={noti.content}
+                        eventKind={noti.eventKind}
+                        status={noti.status}
+                        priority={noti.priority}
+                        time={noti.time}
+                        notiStatus={statusMap}
+                        priorityStatus={priorityMap}
+                        issueId={noti.issueId}
+                      />
+                    )}
+                  </Text>
+                </div>
+              ))}
+            </>
+          )}
         </DropdownMenu.Content>
       </DropdownMenu.Root>
       <Toaster

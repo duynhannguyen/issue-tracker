@@ -8,7 +8,7 @@ import Link from "next/link";
 const IssueNotiLayout = ({
   action,
   content,
-  eventKind = "Issue",
+  eventKind = "ISSUE",
   time,
   status,
   priority,

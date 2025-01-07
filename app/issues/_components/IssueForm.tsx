@@ -56,7 +56,7 @@ const IssueForm = ({ issue, assignee }: IssueFormProps) => {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      // setSubmitting(true);
+      setSubmitting(true);
       if (issue) await axios.patch(`/api/issue/${issue.id}`, data);
       else {
         const submitIssue = await axios.post("/api/issue", data);
@@ -64,7 +64,7 @@ const IssueForm = ({ issue, assignee }: IssueFormProps) => {
           socket.emit("new-issue", submitIssue.data.issueNoti);
         }
       }
-      // router.push("/issues/list");
+      router.push("/issues/list");
     } catch (error) {
       setSubmitting(false);
       setError("An unexpected error occurred. ");
