@@ -17,7 +17,7 @@ import { usePathname } from "next/navigation";
 import { FaBug } from "react-icons/fa6";
 import { Skeleton } from "@/app/components";
 import { Bell, SignalHigh, SignalLow, SignalMedium } from "lucide-react";
-import { Priority, Status } from "@prisma/client";
+import { IssueNoti, Priority, Status } from "@prisma/client";
 import { useEffect } from "react";
 import { socket } from "./helper/socket";
 import IssueNotiLayout from "./components/IssueNotiLayout";
@@ -26,15 +26,16 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import IssueNotiSkeleton from "./components/IssueNotiSkeleton";
 
-export type IssueNoti = {
-  eventKind: "ISSUE";
-  action: "Create" | "Update" | "Delete" | "Change";
-  content: string;
-  priority?: Priority;
-  status?: Status;
-  time?: Date;
-  issueId: number;
-};
+// export type IssueNoti = {
+//   eventKind: "ISSUE";
+//   action: "Create" | "Update" | "Delete" | "Change";
+//   content: string;
+//   priority?: Priority;
+//   status?: Status;
+//   time?: Date;
+//   issueId: number;
+
+// };
 type AccountNoti = {
   eventKind: "Account";
   action: "Create" | "Update" | "Delete" | "Change";
@@ -149,6 +150,9 @@ const NotificationBox = () => {
                 notiStatus={statusMap}
                 priorityStatus={priorityMap}
                 issueId={noti.issueId}
+                markAsRead={noti.markAsRead}
+                id={noti.id}
+                userId={noti.userId}
               />
             </Text>
 
@@ -196,7 +200,19 @@ const NotificationBox = () => {
         }}
       >
         <DropdownMenu.Trigger>
-          <Bell size={19} />
+          <div className="relative">
+            <div className=" absolute -right-1 -top-2 bg-red-500 h-4 w-4 rounded-full text-[9px] font-semibold text-white leading-4 text-center ">
+              <div className="">
+                {notiIssue && notiIssue?.length >= 10
+                  ? "9+"
+                  : notiIssue?.length}
+              </div>
+            </div>
+            <Bell
+              size={24}
+              className="cursor-pointer hover:text-gray-400 transition-colors ease-in-out  "
+            />
+          </div>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content className="w-96 ">
           {isLoading ? (
@@ -231,6 +247,9 @@ const NotificationBox = () => {
                         notiStatus={statusMap}
                         priorityStatus={priorityMap}
                         issueId={noti.issueId}
+                        markAsRead={noti.markAsRead}
+                        id={noti.id}
+                        userId={noti.userId}
                       />
                     )}
                   </Text>

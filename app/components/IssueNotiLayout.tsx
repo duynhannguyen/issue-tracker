@@ -1,9 +1,11 @@
 import React from "react";
-import { IssueNoti } from "../NavBar";
+
 import { Flex, Text, Badge } from "@radix-ui/themes";
 import formatDate from "../helper/formatDate";
 import { PriorityMap, StatusMap } from "./IssueStatusBadge";
 import Link from "next/link";
+import { Dot } from "lucide-react";
+import { IssueNoti } from "@prisma/client";
 
 const IssueNotiLayout = ({
   action,
@@ -15,12 +17,20 @@ const IssueNotiLayout = ({
   notiStatus,
   priorityStatus,
   issueId,
+  id,
+  markAsRead,
+  userId,
 }: IssueNoti & {
   notiStatus: StatusMap;
   priorityStatus: PriorityMap;
 }) => {
   return (
-    <Link href={`${process.env.NEXT_PUBLIC_URL}/issues/${issueId}`}>
+    // <Link href={`${process.env.NEXT_PUBLIC_URL}/issues/${issueId}`}>
+    <Flex
+      align={"start"}
+      gap={"2"}
+    >
+      {!markAsRead && <Dot className="text-sky-600" />}
       <Flex
         direction={"column"}
         gap={"2"}
@@ -52,8 +62,8 @@ const IssueNotiLayout = ({
           >
             {content}
           </Badge>
-          {action !== "Change" && ` has been ${action} `}
-          {action === "Change" && `has been changed to ${status || priority}`}
+          {action !== "CHANGE" && ` has been ${action} `}
+          {action === "CHANGE" && `has been changed to ${status || priority}`}
         </Text>
         <Text
           size="1"
@@ -63,7 +73,8 @@ const IssueNotiLayout = ({
           {time && formatDate(time)}
         </Text>
       </Flex>
-    </Link>
+    </Flex>
+    // </Link>
   );
 };
 
