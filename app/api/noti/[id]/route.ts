@@ -35,3 +35,21 @@ export const GET = async (
     status: 200,
   });
 };
+
+export const PATCH = async (request: NextRequest) => {
+  const body = await request.json();
+  if (body.isRead) {
+    return NextResponse.json("ok", { status: 200 });
+  }
+
+  const noti = await prisma.issueNoti.update({
+    where: {
+      id: body.id,
+    },
+    data: {
+      markAsRead: true,
+    },
+  });
+
+  return NextResponse.json("ok", { status: 200 });
+};

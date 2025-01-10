@@ -13,7 +13,7 @@ import { VscClose } from "react-icons/vsc";
 import classNames from "classnames";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FaBug } from "react-icons/fa6";
 import { Skeleton } from "@/app/components";
 import { Bell, SignalHigh, SignalLow, SignalMedium } from "lucide-react";
@@ -26,16 +26,6 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import IssueNotiSkeleton from "./components/IssueNotiSkeleton";
 
-// export type IssueNoti = {
-//   eventKind: "ISSUE";
-//   action: "Create" | "Update" | "Delete" | "Change";
-//   content: string;
-//   priority?: Priority;
-//   status?: Status;
-//   time?: Date;
-//   issueId: number;
-
-// };
 type AccountNoti = {
   eventKind: "Account";
   action: "Create" | "Update" | "Delete" | "Change";
@@ -58,7 +48,21 @@ type PriorityMap = Record<
     icon: JSX.Element;
   }
 >;
+const statusMap: StatusMap = {
+  OPEN: { label: "OPEN", color: "red" },
+  IN_PROGRESS: { label: "IN_PROGRESS", color: "violet" },
+  CLOSED: { label: "CLOSED", color: "green" },
+};
 
+const priorityMap: PriorityMap = {
+  HIGH: { label: "HIGH", color: "red", icon: <SignalHigh size={24} /> },
+  MEDIUM: {
+    label: "MEDIUM",
+    color: "violet",
+    icon: <SignalMedium size={24} />,
+  },
+  LOW: { label: "LOW", color: "green", icon: <SignalLow size={24} /> },
+};
 const NavBar = () => {
   return (
     <nav className=" space-x-6 border-b mb-5 px-5 py-3 ">
@@ -113,6 +117,7 @@ const NavLinks = () => {
 };
 
 const NotificationBox = () => {
+  const router = useRouter();
   const { data: session } = useSession();
   const {
     data: notiIssue,
@@ -174,21 +179,31 @@ const NotificationBox = () => {
     });
   });
 
-  const statusMap: StatusMap = {
-    OPEN: { label: "OPEN", color: "red" },
-    IN_PROGRESS: { label: "IN_PROGRESS", color: "violet" },
-    CLOSED: { label: "CLOSED", color: "green" },
+  const handleMarkNotiAsRead = async ({
+    id,
+    isRead,
+  }: {
+    id: number;
+    isRead: boolean;
+  }) => {
+    try {
+      if (isRead) {
+        return;
+      }
+      const markingNoti = await axios.patch(`/api/noti/${id}`, {
+        id,
+        isRead,
+      });
+      refetch();
+    } catch (error) {
+      throw new Error();
+    }
   };
 
-  const priorityMap: PriorityMap = {
-    HIGH: { label: "HIGH", color: "red", icon: <SignalHigh size={24} /> },
-    MEDIUM: {
-      label: "MEDIUM",
-      color: "violet",
-      icon: <SignalMedium size={24} />,
-    },
-    LOW: { label: "LOW", color: "green", icon: <SignalLow size={24} /> },
-  };
+  const unreadNoti = notiIssue?.filter(
+    (noti) => noti.eventKind === "ISSUE" && noti.markAsRead === false
+  );
+
   if (error) return null;
   return (
     <>
@@ -200,14 +215,14 @@ const NotificationBox = () => {
         }}
       >
         <DropdownMenu.Trigger>
-          <div className="relative">
-            <div className=" absolute -right-1 -top-2 bg-red-500 h-4 w-4 rounded-full text-[9px] font-semibold text-white leading-4 text-center ">
-              <div className="">
-                {notiIssue && notiIssue?.length >= 10
-                  ? "9+"
-                  : notiIssue?.length}
+          <div className="relative transition-all ease-in-out ">
+            {unreadNoti && unreadNoti.length > 0 ? (
+              <div className=" absolute -right-1 -top-2 bg-red-500 h-4 w-4 rounded-full text-[9px] font-semibold text-white leading-4 text-center ">
+                <div className="">
+                  {unreadNoti?.length >= 10 ? "9+" : unreadNoti?.length}
+                </div>
               </div>
-            </div>
+            ) : null}
             <Bell
               size={24}
               className="cursor-pointer hover:text-gray-400 transition-colors ease-in-out  "
@@ -237,20 +252,30 @@ const NotificationBox = () => {
                     className="p-2 hover:bg-gray-100 transition-all 0.5s ease-in-out text-pretty	"
                   >
                     {noti.eventKind === "ISSUE" && (
-                      <IssueNotiLayout
-                        action={noti.action}
-                        content={noti.content}
-                        eventKind={noti.eventKind}
-                        status={noti.status}
-                        priority={noti.priority}
-                        time={noti.time}
-                        notiStatus={statusMap}
-                        priorityStatus={priorityMap}
-                        issueId={noti.issueId}
-                        markAsRead={noti.markAsRead}
-                        id={noti.id}
-                        userId={noti.userId}
-                      />
+                      <div
+                        onClick={() => {
+                          handleMarkNotiAsRead({
+                            id: noti.id,
+                            isRead: noti.markAsRead,
+                          });
+                          router.push(`/issues/${noti.issueId}`);
+                        }}
+                      >
+                        <IssueNotiLayout
+                          action={noti.action}
+                          content={noti.content}
+                          eventKind={noti.eventKind}
+                          status={noti.status}
+                          priority={noti.priority}
+                          time={noti.time}
+                          notiStatus={statusMap}
+                          priorityStatus={priorityMap}
+                          issueId={noti.issueId}
+                          markAsRead={noti.markAsRead}
+                          id={noti.id}
+                          userId={noti.userId}
+                        />
+                      </div>
                     )}
                   </Text>
                 </div>

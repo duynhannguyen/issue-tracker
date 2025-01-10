@@ -30,7 +30,7 @@ const IssueNotiLayout = ({
       align={"start"}
       gap={"2"}
     >
-      {!markAsRead && <Dot className="text-sky-600" />}
+      {!markAsRead && <Dot className="text-sky-600 " />}
       <Flex
         direction={"column"}
         gap={"2"}
