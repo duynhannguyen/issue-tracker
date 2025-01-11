@@ -1,5 +1,6 @@
 "use client";
 import { Skeleton } from "@/app/components";
+import { socket } from "@/app/helper/socket";
 import { Issue, User } from "@prisma/client";
 import { Select } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
@@ -18,18 +19,20 @@ const AssignSelect = ({ issue }: { issue: Issue }) => {
   });
   if (isLoading) return <Skeleton />;
   if (error) return null;
+
   const assignIssue = async (userId: string) => {
     try {
-      toast.promise(
-        axios.patch(`/api/issue/${issue.id}`, {
+      const handleAssign = async () => {
+        await axios.patch(`/api/issue/${issue.id}`, {
           assignedToUserId: userId === "unassigned" ? null : userId,
-        }),
-        {
-          loading: "Assigning...",
-          success: "Assign successfully",
-          error: "Assign could not be changes",
-        }
-      );
+        });
+        socket.emit("assign-to-user", { userId, issue });
+      };
+      toast.promise(handleAssign(), {
+        loading: "Assigning...",
+        success: "Assign successfully",
+        error: "Assign could not be changes",
+      });
     } catch (error) {
       toast.error("Changes could not be saved");
     }
