@@ -5,7 +5,7 @@ import { Issue, User } from "@prisma/client";
 import { Select } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 const AssignSelect = ({ issue }: { issue: Issue }) => {
   const {
     data: users,
@@ -28,11 +28,15 @@ const AssignSelect = ({ issue }: { issue: Issue }) => {
         });
         socket.emit("assign-to-user", { userId, issue });
       };
-      toast.promise(handleAssign(), {
-        loading: "Assigning...",
-        success: "Assign successfully",
-        error: "Assign could not be changes",
-      });
+      toast.promise(
+        handleAssign(),
+        {
+          loading: "Assigning...",
+          success: "Assign successfully",
+          error: "Assign could not be changes",
+        },
+        { id: "assignIssue" }
+      );
     } catch (error) {
       toast.error("Changes could not be saved");
     }
@@ -64,7 +68,6 @@ const AssignSelect = ({ issue }: { issue: Issue }) => {
           </Select.Group>
         </Select.Content>
       </Select.Root>
-      <Toaster />
     </>
   );
 };

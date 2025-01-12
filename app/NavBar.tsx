@@ -174,7 +174,7 @@ const NotificationBox = () => {
             </Button>
           </Flex>
         ),
-        { id: noti.id, duration: 5000 }
+        { id: "notiItem", duration: 5000 }
       );
     });
   });
@@ -287,6 +287,9 @@ const NotificationBox = () => {
       <Toaster
         position="top-right"
         reverseOrder={false}
+        toastOptions={{
+          id: "notiItem",
+        }}
       />
     </>
   );
