@@ -48,13 +48,13 @@ type PriorityMap = Record<
     icon: JSX.Element;
   }
 >;
-const statusMap: StatusMap = {
+export const statusMap: StatusMap = {
   OPEN: { label: "OPEN", color: "red" },
   IN_PROGRESS: { label: "IN_PROGRESS", color: "violet" },
   CLOSED: { label: "CLOSED", color: "green" },
 };
 
-const priorityMap: PriorityMap = {
+export const priorityMap: PriorityMap = {
   HIGH: { label: "HIGH", color: "red", icon: <SignalHigh size={24} /> },
   MEDIUM: {
     label: "MEDIUM",
@@ -131,53 +131,6 @@ const NotificationBox = () => {
       await axios.get(`/api/noti/${session?.user.id}`).then((res) => res.data),
     staleTime: 60 * 1000,
     enabled: !!session?.user.id,
-  });
-
-  useEffect(() => {
-    socketState?.on("notify-new-issue", (noti) => {
-      toast.custom(
-        (t) => (
-          <Flex
-            className="bg-white p-2 shadow-md "
-            align={"center"}
-            gap={"3"}
-          >
-            <Text
-              as="div"
-              className="pointer-events-none"
-            >
-              <IssueNotiLayout
-                action={noti.action}
-                content={noti.content}
-                eventKind={noti.eventKind}
-                status={noti.status}
-                priority={noti.priority}
-                time={noti.time}
-                notiStatus={statusMap}
-                priorityStatus={priorityMap}
-                issueId={noti.issueId}
-                markAsRead={noti.markAsRead}
-                id={noti.id}
-                userId={noti.userId}
-              />
-            </Text>
-
-            <Button
-              variant="solid"
-              size={"1"}
-              onClick={() => toast.dismiss(t.id)}
-              color="red"
-            >
-              <VscClose
-                className="text-xs cursor-pointer"
-                color="white"
-              />
-            </Button>
-          </Flex>
-        ),
-        { id: "notiItem", duration: 5000 }
-      );
-    });
   });
 
   const handleMarkNotiAsRead = async ({

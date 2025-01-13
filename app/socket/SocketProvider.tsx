@@ -9,6 +9,11 @@ import React, {
 } from "react";
 import { socket } from "../helper/socket";
 import { Socket } from "socket.io-client";
+import { VscClose } from "react-icons/vsc";
+import { Button, Flex, Text } from "@radix-ui/themes";
+import toast from "react-hot-toast";
+import IssueNotiLayout from "../components/IssueNotiLayout";
+import { priorityMap, statusMap } from "../NavBar";
 
 type SocketContextType = {
   socketState: Socket | null;
@@ -44,6 +49,50 @@ const SocketProvider = ({ children }: PropsWithChildren) => {
     socket.on("noti-assign-issue", (issue) => {
       console.log(issue);
       console.log(1);
+    });
+    socketState?.on("notify-new-issue", (noti) => {
+      toast.custom(
+        (t) => (
+          <Flex
+            className="bg-white p-2 shadow-md "
+            align={"center"}
+            gap={"3"}
+          >
+            <Text
+              as="div"
+              className="pointer-events-none"
+            >
+              <IssueNotiLayout
+                action={noti.action}
+                content={noti.content}
+                eventKind={noti.eventKind}
+                status={noti.status}
+                priority={noti.priority}
+                time={noti.time}
+                notiStatus={statusMap}
+                priorityStatus={priorityMap}
+                issueId={noti.issueId}
+                markAsRead={noti.markAsRead}
+                id={noti.id}
+                userId={noti.userId}
+              />
+            </Text>
+
+            <Button
+              variant="solid"
+              size={"1"}
+              onClick={() => toast.dismiss(t.id)}
+              color="red"
+            >
+              <VscClose
+                className="text-xs cursor-pointer"
+                color="white"
+              />
+            </Button>
+          </Flex>
+        ),
+        { id: "notiItem", duration: 5000 }
+      );
     });
     setSocketState(socket);
     return () => {
