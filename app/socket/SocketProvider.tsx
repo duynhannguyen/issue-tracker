@@ -20,7 +20,7 @@ export const StoreSocket = createContext<SocketContextType>({
   isConnected: false,
 });
 
-const useSocket = () => {
+export const useSocket = () => {
   const context = useContext(StoreSocket);
   if (!context) {
     throw new Error("useSocket must be use within a SocketProvider");

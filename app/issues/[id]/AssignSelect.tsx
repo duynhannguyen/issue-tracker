@@ -5,8 +5,10 @@ import { Issue, User } from "@prisma/client";
 import { Select } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 const AssignSelect = ({ issue }: { issue: Issue }) => {
+  const session = useSession();
   const {
     data: users,
     error,
@@ -19,7 +21,6 @@ const AssignSelect = ({ issue }: { issue: Issue }) => {
   });
   if (isLoading) return <Skeleton />;
   if (error) return null;
-
   const assignIssue = async (userId: string) => {
     try {
       const handleAssign = async () => {
@@ -51,6 +52,7 @@ const AssignSelect = ({ issue }: { issue: Issue }) => {
             : issue.assignedToUserId
         }
         onValueChange={(userId) => assignIssue(userId)}
+        disabled={issue.authorId !== session.data?.user.id}
       >
         <Select.Trigger placeholder="Assign..." />
         <Select.Content>
