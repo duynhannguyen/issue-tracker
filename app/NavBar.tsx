@@ -19,12 +19,12 @@ import { Skeleton } from "@/app/components";
 import { Bell, SignalHigh, SignalLow, SignalMedium } from "lucide-react";
 import { IssueNoti, Priority, Status } from "@prisma/client";
 import { useEffect } from "react";
-import { socket } from "./helper/socket";
 import IssueNotiLayout from "./components/IssueNotiLayout";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import IssueNotiSkeleton from "./components/IssueNotiSkeleton";
+import { useSocket } from "./socket/SocketProvider";
 
 type AccountNoti = {
   eventKind: "Account";
@@ -118,6 +118,7 @@ const NavLinks = () => {
 
 const NotificationBox = () => {
   const router = useRouter();
+  const { socketState } = useSocket();
   const { data: session } = useSession();
   const {
     data: notiIssue,
@@ -133,7 +134,7 @@ const NotificationBox = () => {
   });
 
   useEffect(() => {
-    socket.on("notify-new-issue", (noti) => {
+    socketState?.on("notify-new-issue", (noti) => {
       toast.custom(
         (t) => (
           <Flex

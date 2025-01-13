@@ -33,13 +33,18 @@ const SocketProvider = ({ children }: PropsWithChildren) => {
   const [socketState, setSocketState] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   useEffect(() => {
+    socket.connect();
+
     socket.on("connect", () => {
       setIsConnected(true);
     });
     socket.on("disconnect", () => {
       setIsConnected(false);
     });
-
+    socket.on("noti-assign-issue", (issue) => {
+      console.log(issue);
+      console.log(1);
+    });
     setSocketState(socket);
     return () => {
       socket.disconnect();

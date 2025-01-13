@@ -1,6 +1,7 @@
 "use client";
 import { Skeleton } from "@/app/components";
-import { socket } from "@/app/helper/socket";
+
+import { useSocket } from "@/app/socket/SocketProvider";
 import { Issue, User } from "@prisma/client";
 import { Select } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
@@ -9,6 +10,7 @@ import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 const AssignSelect = ({ issue }: { issue: Issue }) => {
   const session = useSession();
+  const { socketState, isConnected } = useSocket();
   const {
     data: users,
     error,
@@ -27,7 +29,8 @@ const AssignSelect = ({ issue }: { issue: Issue }) => {
         await axios.patch(`/api/issue/${issue.id}`, {
           assignedToUserId: userId === "unassigned" ? null : userId,
         });
-        socket.emit("assign-to-user", { userId, issue });
+
+        socketState?.emit("assign-to-user", { userId, issue });
       };
       toast.promise(
         handleAssign(),
