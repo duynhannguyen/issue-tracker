@@ -14,6 +14,8 @@ import { Button, Flex, Text } from "@radix-ui/themes";
 import toast from "react-hot-toast";
 import IssueNotiLayout from "../components/IssueNotiLayout";
 import { priorityMap, statusMap } from "../NavBar";
+import axios from "axios";
+import Link from "next/link";
 
 type SocketContextType = {
   socketState: Socket | null;
@@ -50,7 +52,7 @@ const SocketProvider = ({ children }: PropsWithChildren) => {
       console.log(issue);
       console.log(1);
     });
-    socketState?.on("notify-new-issue", (noti) => {
+    socket?.on("notify-new-issue", async (noti) => {
       toast.custom(
         (t) => (
           <Flex
@@ -58,9 +60,9 @@ const SocketProvider = ({ children }: PropsWithChildren) => {
             align={"center"}
             gap={"3"}
           >
-            <Text
-              as="div"
-              className="pointer-events-none"
+            <Link
+              className=""
+              href={`/issues/${noti.issueId}`}
             >
               <IssueNotiLayout
                 action={noti.action}
@@ -75,8 +77,9 @@ const SocketProvider = ({ children }: PropsWithChildren) => {
                 markAsRead={noti.markAsRead}
                 id={noti.id}
                 userId={noti.userId}
+                receiver={noti.receiver}
               />
-            </Text>
+            </Link>
 
             <Button
               variant="solid"

@@ -1,28 +1,25 @@
 "use client";
 
+import { Skeleton } from "@/app/components";
+import { IssueNoti, Priority, Status } from "@prisma/client";
 import {
   Avatar,
   Box,
-  Button,
   Container,
   DropdownMenu,
   Flex,
   Text,
 } from "@radix-ui/themes";
-import { VscClose } from "react-icons/vsc";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import classNames from "classnames";
+import { Bell, SignalHigh, SignalLow, SignalMedium } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { Toaster } from "react-hot-toast";
 import { FaBug } from "react-icons/fa6";
-import { Skeleton } from "@/app/components";
-import { Bell, SignalHigh, SignalLow, SignalMedium } from "lucide-react";
-import { IssueNoti, Priority, Status } from "@prisma/client";
-import { useEffect } from "react";
 import IssueNotiLayout from "./components/IssueNotiLayout";
-import toast, { Toaster } from "react-hot-toast";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
 import IssueNotiSkeleton from "./components/IssueNotiSkeleton";
 import { useSocket } from "./socket/SocketProvider";
 
@@ -132,7 +129,7 @@ const NotificationBox = () => {
     staleTime: 60 * 1000,
     enabled: !!session?.user.id,
   });
-
+  console.log("notiIssue", notiIssue);
   const handleMarkNotiAsRead = async ({
     id,
     isRead,
@@ -216,6 +213,7 @@ const NotificationBox = () => {
                         }}
                       >
                         <IssueNotiLayout
+                          receiver={noti.receiver}
                           action={noti.action}
                           content={noti.content}
                           eventKind={noti.eventKind}

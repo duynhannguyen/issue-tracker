@@ -1,5 +1,6 @@
 import authOptions from "@/app/auth/authOptions";
 import prisma from "@/prisma/client";
+import { IssueNoti } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -18,14 +19,19 @@ export const GET = async (
 
   const noti = await prisma.issueNoti.findMany({
     where: {
-      userId: params.id,
+      OR: [
+        { receiver: "ALL" },
+        {
+          receiver: params.id,
+        },
+      ],
     },
     orderBy: {
       time: "desc",
     },
+    take: 10,
   });
-  console.log("nhan", noti);
-  console.log("session", params);
+  console.log("noti", noti);
   if (!noti)
     return NextResponse.json("Unexpected error", {
       status: 404,
@@ -34,6 +40,26 @@ export const GET = async (
   return NextResponse.json(noti, {
     status: 200,
   });
+};
+
+export const POST = async (request: NextRequest) => {
+  const session = await getServerSession(authOptions);
+
+  if (!session) return NextResponse.json({}, { status: 401 });
+
+  const issue: IssueNoti = await request.json();
+  await prisma.issueNoti.create({
+    data: {
+      ...issue,
+    },
+  });
+
+  return NextResponse.json(
+    { text: "Ok" },
+    {
+      status: 200,
+    }
+  );
 };
 
 export const PATCH = async (request: NextRequest) => {

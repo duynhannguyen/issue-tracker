@@ -63,6 +63,7 @@ model IssueNoti {
   issueId    Int
   idOfIssue  Issue       @relation("IssueId", fields: [issueId], references: [id])
   markAsRead Boolean     @default(false)
+  receiver   String      @default("ALL")
 }
 
 model User {
