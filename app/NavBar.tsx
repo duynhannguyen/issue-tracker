@@ -14,7 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import classNames from "classnames";
 import { Bell, SignalHigh, SignalLow, SignalMedium } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Toaster } from "react-hot-toast";
@@ -252,12 +252,14 @@ const AuthStatus = () => {
   if (status === "loading") return <Skeleton width={"3rem"} />;
   if (status === "unauthenticated")
     return (
-      <Link
+      <button
         className="nav-link"
-        href={"/api/auth/signin"}
+        onClick={() =>
+          signIn("google", { redirect: false, callbackUrl: "/dashboard" })
+        }
       >
         Login
-      </Link>
+      </button>
     );
   return (
     <Box>
@@ -278,7 +280,9 @@ const AuthStatus = () => {
             <Text size={"2"}>{session!.user?.email}</Text>
           </DropdownMenu.Label>
           <DropdownMenu.Item>
-            <Link href={"/api/auth/signout"}>Log out</Link>
+            <button onClick={() => signOut({ callbackUrl: "/" })}>
+              Log out
+            </button>
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>

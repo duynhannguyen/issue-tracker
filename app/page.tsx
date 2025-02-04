@@ -1,9 +1,14 @@
 "use client";
 
 import { Card, Flex } from "@radix-ui/themes";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 export default function Page() {
+  const session = useSession();
+  const router = useRouter();
+  console.log(session);
+  if (session.status === "authenticated") router.push("/dashboard");
   return (
     <Card className="max-w-7xl">
       <Flex
@@ -18,6 +23,7 @@ export default function Page() {
           <button
             onClick={() =>
               signIn("google", {
+                redirect: false,
                 callbackUrl: "/dashboard",
               })
             }
