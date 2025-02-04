@@ -1,6 +1,4 @@
-"use client";
 import { Card, Flex } from "@radix-ui/themes";
-import { Metadata } from "next";
 import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 export default function Page() {
@@ -31,8 +29,3 @@ export default function Page() {
     </Card>
   );
 }
-
-export const metadata: Metadata = {
-  title: "Issue Tracker - Home Page",
-  description: "Home page",
-};
