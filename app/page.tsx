@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, Flex } from "@radix-ui/themes";
 import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
