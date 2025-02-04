@@ -25,7 +25,6 @@ const IssueNotiLayout = ({
   priorityStatus: PriorityMap;
 }) => {
   return (
-    // <Link href={`${process.env.NEXT_PUBLIC_URL}/issues/${issueId}`}>
     <Flex
       align={"start"}
       gap={"2"}
@@ -74,7 +73,6 @@ const IssueNotiLayout = ({
         </Text>
       </Flex>
     </Flex>
-    // </Link>
   );
 };
 
