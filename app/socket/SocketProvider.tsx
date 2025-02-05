@@ -10,11 +10,10 @@ import React, {
 import { socket } from "../helper/socket";
 import { Socket } from "socket.io-client";
 import { VscClose } from "react-icons/vsc";
-import { Button, Flex, Text } from "@radix-ui/themes";
+import { Button, Flex } from "@radix-ui/themes";
 import toast from "react-hot-toast";
 import IssueNotiLayout from "../components/IssueNotiLayout";
 import { priorityMap, statusMap } from "../NavBar";
-import axios from "axios";
 import Link from "next/link";
 
 type SocketContextType = {

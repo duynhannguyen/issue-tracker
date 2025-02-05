@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import Dashboard from "./Dashboard";
+import Dashboard from "./components/Dashboard";
 
 const Page = () => <Dashboard />;
 export const metadata: Metadata = {
