@@ -31,7 +31,6 @@ export const GET = async (
     },
     take: 10,
   });
-  console.log("noti", noti);
   if (!noti)
     return NextResponse.json("Unexpected error", {
       status: 404,

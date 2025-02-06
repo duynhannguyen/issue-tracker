@@ -91,7 +91,7 @@ const NavBar = () => {
 const NavLinks = () => {
   const currentPath = usePathname();
   const links = [
-    { label: "Dashboard", href: "/dashboard" },
+    { label: "Dashboard", href: "/dashboard/groups" },
     { label: "Issues", href: "/issues/list" },
   ];
   return (
@@ -129,7 +129,6 @@ const NotificationBox = () => {
     staleTime: 60 * 1000,
     enabled: !!session?.user.id,
   });
-  console.log("notiIssue", notiIssue);
   const handleMarkNotiAsRead = async ({
     id,
     isRead,

@@ -4,7 +4,7 @@ import React from "react";
 import { FaUserGroup } from "react-icons/fa6";
 
 const SideBar = () => {
-  const sideBarLinks = [{ title: "Groups", href: "/groups" }];
+  const sideBarLinks = [{ title: "Groups", href: "/dashboard/groups" }];
 
   return (
     <Flex direction={"column"}>

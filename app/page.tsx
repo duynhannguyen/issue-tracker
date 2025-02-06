@@ -7,8 +7,7 @@ import { FcGoogle } from "react-icons/fc";
 export default function Page() {
   const session = useSession();
   const router = useRouter();
-  console.log(session);
-  if (session.status === "authenticated") router.push("/dashboard");
+  if (session.status === "authenticated") router.push("/dashboard/groups");
   return (
     <Card className="max-w-7xl">
       <Flex
@@ -24,7 +23,7 @@ export default function Page() {
             onClick={() =>
               signIn("google", {
                 redirect: false,
-                callbackUrl: "/dashboard",
+                callbackUrl: "/dashboard/groups",
               })
             }
             className=" w-full flex justify-center items-center gap-2 text-sm px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-200 transition-colors "
