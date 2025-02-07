@@ -40,3 +40,8 @@ export const updateIssueSchema = z.object({
     }),
   }),
 });
+
+export const createGroupSchema = z.object({
+  groupName: z.string().min(1, "Group name is required").max(255),
+  color: z.string().optional(),
+});
