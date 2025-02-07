@@ -6,6 +6,7 @@ import { z } from "zod";
 import { createGroupSchema } from "@/app/validationSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "@/app/components";
+import axios from "axios";
 const Groups = () => {
   const {
     register,
@@ -16,12 +17,15 @@ const Groups = () => {
     resolver: zodResolver(createGroupSchema),
     defaultValues: {
       groupName: "",
-      color: "#ffb300c2",
+      color: "#ffb300",
     },
     mode: "onSubmit",
   });
-  const onSubmit = handleSubmit((data) => {
-    console.log("data", data);
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      console.log(1);
+      const creatingGroup = await axios.post("/api/groups", data);
+    } catch (error) {}
   });
 
   return (
