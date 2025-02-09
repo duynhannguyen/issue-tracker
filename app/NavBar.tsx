@@ -254,7 +254,10 @@ const AuthStatus = () => {
       <button
         className="nav-link"
         onClick={() =>
-          signIn("google", { redirect: false, callbackUrl: "/dashboard" })
+          signIn("google", {
+            redirect: false,
+            callbackUrl: "/dashboard/groups",
+          })
         }
       >
         Login
