@@ -7,7 +7,9 @@ import { createGroupSchema } from "@/app/validationSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "@/app/components";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 const Groups = () => {
+  const session = useSession();
   const {
     register,
     handleSubmit,
@@ -17,25 +19,28 @@ const Groups = () => {
     resolver: zodResolver(createGroupSchema),
     defaultValues: {
       groupName: "",
+      creatorId: session.data?.user.id,
       color: "#ffb300",
     },
     mode: "onSubmit",
   });
   const onSubmit = handleSubmit(async (data) => {
     try {
-      console.log(1);
+      console.log(data);
       const creatingGroup = await axios.post("/api/groups", data);
     } catch (error) {}
   });
-
   return (
     <div>
       <p className="font-semibold mb-2">YOUR GROUPS</p>
       <Dialog.Root onOpenChange={(open) => open && reset()}>
         <Dialog.Trigger>
-          <button className=" bg-slate-400/30 rounded-lg text-gray-500 font-semibold p-1  h-20 w-52 hover:bg-primary transition-colors  ">
+          <Button
+            variant="soft"
+            className="  rounded-lg font-semibold p-1 h-20 w-52 "
+          >
             Create new group
-          </button>
+          </Button>
         </Dialog.Trigger>
         <Dialog.Content>
           <Dialog.Title>Create Your Group</Dialog.Title>
@@ -98,6 +103,7 @@ const Groups = () => {
               <Button
                 type="submit"
                 size={"3"}
+                variant="soft"
               >
                 Create
               </Button>
