@@ -26,6 +26,16 @@ model Issue {
   IssueNoti        IssueNoti[] @relation("IssueId")
 }
 
+model Group {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  color     String?  @default("#ffb300") @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  creatorId String   @db.VarChar(255)
+  creator   User     @relation("creator", fields: [creatorId], references: [id])
+}
+
 enum Status {
   OPEN
   IN_PROGRESS
@@ -77,6 +87,7 @@ model User {
   assignedIssues Issue[]     @relation("assignedToIssuesId")
   createdIssues  Issue[]     @relation("createdIssues")
   notis          IssueNoti[] @relation("IssueUserId")
+  groups         Group[]     @relation("creator")
 
   @@map("users")
 }
