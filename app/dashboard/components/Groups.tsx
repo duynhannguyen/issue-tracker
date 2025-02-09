@@ -37,7 +37,7 @@ const Groups = () => {
         <Dialog.Trigger>
           <Button
             variant="soft"
-            className="  rounded-lg font-semibold p-1 h-20 w-52 "
+            className="rounded-lg font-semibold p-1 h-20 w-52 "
           >
             Create new group
           </Button>
