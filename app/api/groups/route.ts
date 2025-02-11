@@ -1,8 +1,19 @@
+import authOptions from "@/app/auth/authOptions";
 import { createGroupSchema } from "@/app/validationSchema";
 import prisma from "@/prisma/client";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json(
+      {
+        message: "Please authorized",
+      },
+      { status: 401 }
+    );
+  }
   const body = await req.json();
   const validation = createGroupSchema.safeParse(body);
   console.log("validation", validation);
@@ -12,7 +23,7 @@ export async function POST(req: NextRequest) {
     });
   }
   console.log("validation", validation);
-  const { groupName, color, creatorId } = validation.data;
+  const { groupName, color } = validation.data;
 
   const existingGroup = await prisma.group.findFirst({
     where: {
@@ -29,7 +40,7 @@ export async function POST(req: NextRequest) {
     data: {
       name: groupName,
       color,
-      creatorId,
+      creatorId: session?.user.id,
     },
   });
   console.log(createGroup);

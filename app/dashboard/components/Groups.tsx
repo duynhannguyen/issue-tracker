@@ -19,17 +19,17 @@ const Groups = () => {
     resolver: zodResolver(createGroupSchema),
     defaultValues: {
       groupName: "",
-      creatorId: session.data?.user.id,
       color: "#ffb300",
     },
-    mode: "onSubmit",
   });
   const onSubmit = handleSubmit(async (data) => {
     try {
-      console.log(data);
       const creatingGroup = await axios.post("/api/groups", data);
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   });
+  console.log("errors", errors);
   return (
     <div>
       <p className="font-semibold mb-2">YOUR GROUPS</p>
@@ -88,18 +88,15 @@ const Groups = () => {
               gap={"2"}
               align={"center"}
             >
-              <Dialog.Close>
-                <Button
-                  color="red"
-                  size={"3"}
-                  variant="soft"
-                  type="button"
-                  onClick={() => reset()}
-                >
-                  Cancel
-                </Button>
-              </Dialog.Close>
-
+              <Button
+                color="red"
+                size={"3"}
+                variant="soft"
+                type="button"
+                onClick={() => reset()}
+              >
+                Cancel
+              </Button>
               <Button
                 type="submit"
                 size={"3"}
