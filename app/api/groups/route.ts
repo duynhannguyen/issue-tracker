@@ -2,6 +2,7 @@ import authOptions from "@/app/auth/authOptions";
 import { createGroupSchema } from "@/app/validationSchema";
 import prisma from "@/prisma/client";
 import { getServerSession } from "next-auth";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -43,12 +44,38 @@ export async function POST(req: NextRequest) {
       creatorId: session?.user.id,
     },
   });
-  console.log(createGroup);
+  revalidatePath("/dashboard/groups");
   return NextResponse.json(
     {
       group: createGroup,
       message: "Create group successfully",
     },
     { status: 201 }
+  );
+}
+
+export async function GET(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json(
+      {
+        message: "Please authorized",
+      },
+      { status: 401 }
+    );
+  }
+
+  const getGroup = await prisma.group.findMany({
+    where: {
+      creatorId: session?.user.id,
+    },
+  });
+
+  console.log("getGroup", getGroup);
+  return NextResponse.json(
+    {
+      getGroup,
+    },
+    { status: 200 }
   );
 }
