@@ -12,7 +12,7 @@ import { Socket } from "socket.io-client";
 import { VscClose } from "react-icons/vsc";
 import { Button, Flex } from "@radix-ui/themes";
 import toast from "react-hot-toast";
-import IssueNotiLayout from "../components/IssueNotiLayout";
+import IssueNotiLayout from "../_components/IssueNotiLayout";
 import { priorityMap, statusMap } from "../NavBar";
 import Link from "next/link";
 

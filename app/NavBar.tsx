@@ -1,6 +1,6 @@
 "use client";
 
-import { Skeleton } from "@/app/components";
+import { Skeleton } from "@/app/_components";
 import { IssueNoti, Priority, Status } from "@prisma/client";
 import {
   Avatar,
@@ -19,8 +19,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Toaster } from "react-hot-toast";
 import { FaBug } from "react-icons/fa6";
-import IssueNotiLayout from "./components/IssueNotiLayout";
-import IssueNotiSkeleton from "./components/IssueNotiSkeleton";
+import IssueNotiLayout from "./_components/IssueNotiLayout";
+import IssueNotiSkeleton from "./_components/IssueNotiSkeleton";
 import { useSocket } from "./socket/SocketProvider";
 
 type AccountNoti = {

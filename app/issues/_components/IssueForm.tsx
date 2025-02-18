@@ -1,6 +1,6 @@
 "use client";
 import { createIssueSchema, updateIssueSchema } from "@/app/validationSchema";
-import { ErrorMessage, IssueStatusBadge, Spinner } from "@/app/components";
+import { ErrorMessage, IssueStatusBadge, Spinner } from "@/app/_components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Issue, User } from "@prisma/client";
 import {

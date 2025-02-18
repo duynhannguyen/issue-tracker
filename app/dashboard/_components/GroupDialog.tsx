@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { createGroupSchema } from "@/app/validationSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ErrorMessage, Spinner } from "@/app/components";
+import { ErrorMessage, Spinner } from "@/app/_components";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 const GroupDialog = () => {

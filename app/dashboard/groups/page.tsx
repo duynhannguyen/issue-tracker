@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import Groups from "../components/Groups";
+import Groups from "../_components/Groups";
 
 const Page = () => <Groups />;
 export const metadata: Metadata = {

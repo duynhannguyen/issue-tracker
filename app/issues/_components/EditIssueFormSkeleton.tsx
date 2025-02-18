@@ -1,5 +1,5 @@
 import { Box } from "@radix-ui/themes";
-import { Skeleton } from "@/app/components";
+import { Skeleton } from "@/app/_components";
 const EditIssueFormSkeleton = () => {
   return (
     <Box className=" max-w-xl space-y-3 ">

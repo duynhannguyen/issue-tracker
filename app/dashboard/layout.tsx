@@ -1,6 +1,6 @@
 import { Grid } from "@radix-ui/themes";
 import { ReactNode } from "react";
-import SideBar from "./components/SideBar";
+import SideBar from "./_components/SideBar";
 
 const DashBoardlayout = ({ children }: { children: ReactNode }) => {
   return (

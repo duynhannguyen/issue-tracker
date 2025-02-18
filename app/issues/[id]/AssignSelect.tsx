@@ -1,5 +1,5 @@
 "use client";
-import { Skeleton } from "@/app/components";
+import { Skeleton } from "@/app/_components";
 
 import { useSocket } from "@/app/socket/SocketProvider";
 import { Issue, User } from "@prisma/client";
