@@ -29,7 +29,7 @@ model Issue {
 model Group {
   id        Int      @id @default(autoincrement())
   name      String   @db.VarChar(255)
-  color     String?  @default("#ffb300") @db.VarChar(255)
+  color     String   @default("#ffb300") @db.VarChar(255)
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
   creatorId String   @db.VarChar(255)
