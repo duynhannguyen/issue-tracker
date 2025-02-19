@@ -7,6 +7,11 @@ import { Flex } from "@radix-ui/themes";
 import { Metadata } from "next";
 
 const IssuesPage = async ({ searchParams }: { searchParams: IssueQuery }) => {
+  console.log("searchParams", searchParams);
+  const group = searchParams.group;
+  // if(!group){
+  //   return
+  // }
   const statuses = Object.values(Status);
   const status = statuses.includes(searchParams.status)
     ? searchParams.status
@@ -37,7 +42,7 @@ const IssuesPage = async ({ searchParams }: { searchParams: IssueQuery }) => {
       direction={"column"}
       gap={"3"}
     >
-      <IssueActions />
+      <IssueActions group={group} />
       <IssueTable
         searchParams={searchParams}
         issues={getIssues}

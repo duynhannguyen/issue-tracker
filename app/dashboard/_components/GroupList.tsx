@@ -24,7 +24,7 @@ const GroupList = async () => {
           >
             <Link
               className=" inline-block h-full w-full"
-              href={`/dashboard/groups/${groupItem.id}`}
+              href={`/issues/list?group=${groupItem.id}`}
             >
               {groupItem.name}{" "}
             </Link>

@@ -10,6 +10,7 @@ export type IssueQuery = {
   orderBy: keyof Issue;
   dir: "asc" | "desc";
   page: string;
+  group: string;
 };
 
 type IssueList = Issue & {

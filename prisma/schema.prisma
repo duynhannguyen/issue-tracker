@@ -21,6 +21,8 @@ model Issue {
   priority         Priority    @default(MEDIUM)
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
+  groupId          Int         @db.SmallInt
+  belongToGroup    Group       @relation("belongToGroup", fields: [groupId], references: [id])
   assignedToUser   User?       @relation("assignedToIssuesId", fields: [assignedToUserId], references: [id])
   assignedToUserId String?     @db.VarChar(255)
   IssueNoti        IssueNoti[] @relation("IssueId")
@@ -34,6 +36,7 @@ model Group {
   updateAt  DateTime @updatedAt
   creatorId String   @db.VarChar(255)
   creator   User     @relation("creator", fields: [creatorId], references: [id])
+  Issue     Issue[]  @relation("belongToGroup")
 }
 
 enum Status {
