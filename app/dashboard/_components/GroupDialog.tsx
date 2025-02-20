@@ -10,6 +10,7 @@ import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 const GroupDialog = () => {
   const [isCreating, setIsCreating] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const {
     register,
@@ -30,6 +31,7 @@ const GroupDialog = () => {
       const creatingGroup = await axios.post("/api/groups", data);
       router.refresh();
       setIsCreating(false);
+      setIsOpen(false);
     } catch (error) {
       setIsCreating(false);
       if (error instanceof AxiosError) {
@@ -39,7 +41,13 @@ const GroupDialog = () => {
   });
   return (
     <div>
-      <Dialog.Root onOpenChange={(open) => open && reset()}>
+      <Dialog.Root
+        open={isOpen}
+        onOpenChange={(open) => {
+          setIsOpen(open);
+          reset();
+        }}
+      >
         <Dialog.Trigger>
           <Button
             variant="soft"

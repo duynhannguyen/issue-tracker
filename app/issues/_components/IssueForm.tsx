@@ -14,7 +14,7 @@ import {
 } from "@radix-ui/themes";
 import axios from "axios";
 import "easymde/dist/easymde.min.css";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import SimpleMDE from "react-simplemde-editor";
@@ -32,7 +32,8 @@ const IssueForm = ({ issue, assignee }: IssueFormProps) => {
   const schema = issue ? updateIssueSchema : createIssueSchema;
 
   const pathName = usePathname();
-
+  const searchParams = useSearchParams();
+  const group = searchParams.get("group");
   const lastSegment = pathName.split("/");
 
   const { data: session } = useSession();
