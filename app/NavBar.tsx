@@ -90,10 +90,7 @@ const NavBar = () => {
 
 const NavLinks = () => {
   const currentPath = usePathname();
-  const links = [
-    { label: "Dashboard", href: "/dashboard/groups" },
-    { label: "Issues", href: "/issues/list" },
-  ];
+  const links = [{ label: "Dashboard", href: "/dashboard/groups" }];
   return (
     <ul className="flex space-x-6 ">
       {links.map((link) => (

@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 import IssueStatusFilter from "./IssueStatusFilter";
 type IssueActionsProps = {
-  group: string;
+  group: number;
 };
 const IssueActions = ({ group }: IssueActionsProps) => {
   return (

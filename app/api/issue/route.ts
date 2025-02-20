@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
       description: body.description,
       authorId: session.user.id,
       priority: body.priority,
+      groupId: parseInt(body.group),
     },
   });
   const createNoti = await prisma.issueNoti.create({

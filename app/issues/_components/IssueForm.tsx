@@ -30,7 +30,6 @@ type IssueFormProps = {
 
 const IssueForm = ({ issue, assignee }: IssueFormProps) => {
   const schema = issue ? updateIssueSchema : createIssueSchema;
-
   const pathName = usePathname();
   const searchParams = useSearchParams();
   const group = searchParams.get("group");
@@ -58,9 +57,10 @@ const IssueForm = ({ issue, assignee }: IssueFormProps) => {
   const onSubmit = handleSubmit(async (data) => {
     try {
       setSubmitting(true);
-      if (issue) await axios.patch(`/api/issue/${issue.id}`, data);
+      if (issue)
+        await axios.patch(`/api/issue/${issue.id}`, { ...data, group });
       else {
-        const submitIssue = await axios.post("/api/issue", data);
+        const submitIssue = await axios.post("/api/issue", { ...data, group });
         if (submitIssue.status === 201) {
           socket.emit("new-issue", submitIssue.data.issueNoti);
         }
