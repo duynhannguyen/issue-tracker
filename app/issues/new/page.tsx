@@ -1,8 +1,6 @@
 import dynamic from "next/dynamic";
 import IssueFormSkeleton from "./loading";
 import { Metadata } from "next";
-import { string } from "zod";
-import { redirect } from "next/navigation";
 import { ErrorMessage } from "@/app/_components";
 
 const IssueForm = dynamic(() => import("@/app/issues/_components/IssueForm"), {

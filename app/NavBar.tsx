@@ -21,7 +21,7 @@ import { Toaster } from "react-hot-toast";
 import { FaBug } from "react-icons/fa6";
 import IssueNotiLayout from "./_components/IssueNotiLayout";
 import IssueNotiSkeleton from "./_components/IssueNotiSkeleton";
-import { useSocket } from "./socket/SocketProvider";
+import InvitedDialog from "./_components/InvitedDialog";
 
 type AccountNoti = {
   eventKind: "Account";
@@ -79,6 +79,7 @@ const NavBar = () => {
             align={"center"}
             gap={"3"}
           >
+            <InvitedDialog />
             <NotificationBox />
             <AuthStatus />
           </Flex>
@@ -112,7 +113,6 @@ const NavLinks = () => {
 
 const NotificationBox = () => {
   const router = useRouter();
-  const { socketState } = useSocket();
   const { data: session } = useSession();
   const {
     data: notiIssue,
