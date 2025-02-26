@@ -45,3 +45,7 @@ export const createGroupSchema = z.object({
   groupName: z.string().min(1, "Group name is required").max(255),
   color: z.string().optional(),
 });
+
+export const inviteMemberSchema = z.object({
+  email: z.string().min(1, "email is required").max(255),
+});
