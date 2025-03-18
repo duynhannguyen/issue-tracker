@@ -6,15 +6,27 @@ import { inviteMemberSchema } from "../validationSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { inviteMember } from "../actions/inviteMember";
+import { useEffect } from "react";
+import { useDebounce } from "../hooks/useDebounce";
 
 const InvitedDialog = () => {
   const params = useSearchParams();
   const group = params.get("group");
-  const { handleSubmit, register, reset } = useForm<
+  const { handleSubmit, register, reset, watch } = useForm<
     z.infer<typeof inviteMemberSchema>
   >({
     resolver: zodResolver(inviteMemberSchema),
   });
+  const showSuggestUser = useDebounce((inputValue) => {
+    console.log(inputValue);
+  });
+  useEffect(() => {
+    const watchEmail = watch((emailValue) => {
+      showSuggestUser(emailValue);
+    });
+
+    return () => watchEmail.unsubscribe();
+  }, [watch, showSuggestUser]);
   if (!group) {
     return null;
   }
@@ -23,6 +35,7 @@ const InvitedDialog = () => {
     formData.append("email", data.email);
     await inviteMember(formData);
   });
+
   return (
     <Dialog.Root>
       <Dialog.Trigger>
