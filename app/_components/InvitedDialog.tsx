@@ -6,30 +6,42 @@ import { inviteMemberSchema } from "../validationSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { inviteMember } from "../actions/inviteMember";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDebounce } from "../hooks/useDebounce";
 import ErrorMessage from "./ErrorMessage";
 
 const InvitedDialog = () => {
   const params = useSearchParams();
   const group = params.get("group");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const {
     handleSubmit,
     register,
     reset,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitted },
   } = useForm<z.infer<typeof inviteMemberSchema>>({
     resolver: zodResolver(inviteMemberSchema),
+    defaultValues: {
+      email: "",
+    },
   });
-  console.log(errors);
   const showSuggestUser = useDebounce((inputValue) => {
     console.log(inputValue);
   });
   useEffect(() => {
-    const watchEmail = watch((emailValue) => {
-      showSuggestUser(emailValue);
-    });
+    const watchEmail = watch(
+      (emailValue) => {
+        if (emailValue.email === "") {
+          return;
+        }
+
+        showSuggestUser(emailValue);
+      },
+      {
+        email: "",
+      }
+    );
 
     return () => watchEmail.unsubscribe();
   }, [watch, showSuggestUser]);
@@ -38,16 +50,20 @@ const InvitedDialog = () => {
   }
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const formData = new FormData();
-      formData.append("email", data.email);
-      await inviteMember(formData);
+      await inviteMember(data);
     } catch (error) {
       console.log(error);
     }
   });
 
   return (
-    <Dialog.Root>
+    <Dialog.Root
+      open={isDialogOpen}
+      onOpenChange={(isOpen) => {
+        setIsDialogOpen(isOpen);
+        reset();
+      }}
+    >
       <Dialog.Trigger>
         <UserPlus className="cursor-pointer hover:text-gray-400 transition-colors ease-in-out  " />
       </Dialog.Trigger>

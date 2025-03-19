@@ -3,7 +3,6 @@ import React from "react";
 import { Flex, Text, Badge } from "@radix-ui/themes";
 import formatDate from "../helper/formatDate";
 import { PriorityMap, StatusMap } from "./IssueStatusBadge";
-import Link from "next/link";
 import { Dot } from "lucide-react";
 import { IssueNoti } from "@prisma/client";
 
