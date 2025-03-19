@@ -8,15 +8,21 @@ import { z } from "zod";
 import { inviteMember } from "../actions/inviteMember";
 import { useEffect } from "react";
 import { useDebounce } from "../hooks/useDebounce";
+import ErrorMessage from "./ErrorMessage";
 
 const InvitedDialog = () => {
   const params = useSearchParams();
   const group = params.get("group");
-  const { handleSubmit, register, reset, watch } = useForm<
-    z.infer<typeof inviteMemberSchema>
-  >({
+  const {
+    handleSubmit,
+    register,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm<z.infer<typeof inviteMemberSchema>>({
     resolver: zodResolver(inviteMemberSchema),
   });
+  console.log(errors);
   const showSuggestUser = useDebounce((inputValue) => {
     console.log(inputValue);
   });
@@ -31,9 +37,13 @@ const InvitedDialog = () => {
     return null;
   }
   const onSubmit = handleSubmit(async (data) => {
-    const formData = new FormData();
-    formData.append("email", data.email);
-    await inviteMember(formData);
+    try {
+      const formData = new FormData();
+      formData.append("email", data.email);
+      await inviteMember(formData);
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   return (
@@ -59,10 +69,13 @@ const InvitedDialog = () => {
                   {...register("email", { required: true })}
                   placeholder="Email address"
                   title="email-member"
+                  type="email"
+                  required
                 />
               </TextField.Root>
               <Button>Invite</Button>
             </Flex>
+            <ErrorMessage>{errors.email?.message}</ErrorMessage>
           </form>
         </Flex>
       </Dialog.Content>

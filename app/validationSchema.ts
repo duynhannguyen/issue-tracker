@@ -47,5 +47,5 @@ export const createGroupSchema = z.object({
 });
 
 export const inviteMemberSchema = z.object({
-  email: z.string().min(1, "email is required").max(255),
+  email: z.string().email("Invalid email").min(1, "email is required").max(255),
 });
