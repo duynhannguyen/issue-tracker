@@ -1,7 +1,7 @@
 "use client";
 import { Skeleton } from "@/app/_components";
 
-import { useSocket } from "@/app/socket/SocketProvider";
+import { useSocket } from "@/app/_socket/SocketProvider";
 import { Issue, User } from "@prisma/client";
 import { Select } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";

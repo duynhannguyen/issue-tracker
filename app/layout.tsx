@@ -7,7 +7,7 @@ import NavBar from "./NavBar";
 import { Container, Theme } from "@radix-ui/themes";
 import AuthProvider from "./auth/Provider";
 import QueryClientProvider from "./QueryClientProvider";
-import SocketProvider from "./socket/SocketProvider";
+import SocketProvider from "./_socket/SocketProvider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
